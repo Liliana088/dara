@@ -7,6 +7,12 @@ if (!isset($_SESSION['user_name'])) {
     header("Location: login.php");
     exit();
 }
+
+// Block guest access
+if ($_SESSION['user_name'] === 'Guest') {
+    header("Location: dashboard.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>

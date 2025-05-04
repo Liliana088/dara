@@ -18,31 +18,39 @@ $error = "";
 $success = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = trim($_POST['password'] ?? '');
+  // Guest login
+  if (isset($_POST['guest_login'])) {
+      $_SESSION['user_id'] = 0;
+      $_SESSION['user_name'] = 'Guest';
+      header("Location: dashboard.php");
+      exit();
+  }
 
-    if (empty($username) || empty($password)) {
-        $error = "Please fill in both Username and Password.";
-    } else {
-        // Use prepared statement
-        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
-        $stmt->bind_param("ss", $username, $password);
-        $stmt->execute();
-        $result = $stmt->get_result();
+  // Normal login
+  $username = trim($_POST['username'] ?? '');
+  $password = trim($_POST['password'] ?? '');
 
-        if ($result && $result->num_rows > 0) {
-            $user = $result->fetch_assoc();
-            $_SESSION['user_id'] = $user['id'];        // optional
-            $_SESSION['user_name'] = $user['name'];    // this is what you'll show in the navbar
+  if (empty($username) || empty($password)) {
+      $error = "Please fill in both Username and Password.";
+  } else {
+      $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+      $stmt->bind_param("ss", $username, $password);
+      $stmt->execute();
+      $result = $stmt->get_result();
 
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            $error = "Incorrect username or password.";
-        }
+      if ($result && $result->num_rows > 0) {
+          $user = $result->fetch_assoc();
+          $_SESSION['user_id'] = $user['id'];
+          $_SESSION['user_name'] = $user['name'];
 
-        $stmt->close();
-    }
+          header("Location: dashboard.php");
+          exit();
+      } else {
+          $error = "Incorrect username or password.";
+      }
+
+      $stmt->close();
+  }
 }
 
 $conn->close();
@@ -102,7 +110,7 @@ $conn->close();
       <div class="mb-1 text-start">   
         <div class="input-group has-validation">
           <span class="input-group-text "><i class="fa fa-user"></i></span>
-          <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+          <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
           <div class="invalid-feedback">
             Please enter your username.
           </div>
@@ -112,15 +120,14 @@ $conn->close();
       <div class="mb-3 text-start">      
         <div class="input-group has-validation">
           <span class="input-group-text"><i class="fa fa-lock"></i></span>
-          <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
           <div class="invalid-feedback">
             Please enter your password.
           </div>
         </div>
       </div>
       <button type="submit" class="btn btn-outline-light w-100 mb-1">Login</button>
-      <input type="hidden" name="guest_login" value="1">
-      <button type="submit" class="btn btn-outline-secondary w-100">Login as Guest</button>
+      <button type="submit" name="guest_login" class="btn btn-outline-secondary w-100">Login as Guest</button>
     </form>
 
     <!-- PHP message output -->
@@ -135,21 +142,23 @@ $conn->close();
 <script src="bootstrap-offline/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// Bootstrap 5 custom validation
+// Bootstrap 5 custom validation with guest login bypass
 (() => {
-  'use strict'
-  const forms = document.querySelectorAll('.needs-validation')
+  'use strict';
+  const forms = document.querySelectorAll('.needs-validation');
   Array.from(forms).forEach(form => {
     form.addEventListener('submit', event => {
-      if (!form.checkValidity()) {
-        event.preventDefault()
-        event.stopPropagation()
+      const isGuestLogin = event.submitter && event.submitter.name === 'guest_login';
+      if (!isGuestLogin && !form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
       }
-      form.classList.add('was-validated')
-    }, false)
-  })
+      form.classList.add('was-validated');
+    }, false);
+  });
 })();
 </script>
+
 
 </body>
 </html>
