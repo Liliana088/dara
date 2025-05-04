@@ -99,7 +99,7 @@ $conn->close();
     <img src="img/dara.png" alt="Logo" class="top-image">
 
     <form method="post" action="" class="needs-validation" novalidate>
-      <div class="mb-3 text-start">   
+      <div class="mb-1 text-start">   
         <div class="input-group has-validation">
           <span class="input-group-text "><i class="fa fa-user"></i></span>
           <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
@@ -118,8 +118,9 @@ $conn->close();
           </div>
         </div>
       </div>
-
-      <button type="submit" class="btn btn-outline-light w-100">Login</button>
+      <button type="submit" class="btn btn-outline-light w-100 mb-1">Login</button>
+      <input type="hidden" name="guest_login" value="1">
+      <button type="submit" class="btn btn-outline-secondary w-100">Login as Guest</button>
     </form>
 
     <!-- PHP message output -->
