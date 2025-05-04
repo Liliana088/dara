@@ -43,6 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $_SESSION['user_id'] = $user['id'];
           $_SESSION['user_name'] = $user['name'];
 
+          // Update the last_login timestamp
+          $update = $conn->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
+          $update->bind_param("i", $user['id']);
+          $update->execute();
+
           header("Location: dashboard.php");
           exit();
       } else {
@@ -158,7 +163,6 @@ $conn->close();
   });
 })();
 </script>
-
 
 </body>
 </html>

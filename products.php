@@ -416,7 +416,6 @@ if ($_SESSION['user_name'] === 'Guest') {
   </div>
 
 <!-- Add Product Modal -->
-<!-- Add Product Modal -->
 <div class="modal fade" id="addProductModal" tabindex="-1">
   <div class="modal-dialog">
     <form id="addProductForm">
