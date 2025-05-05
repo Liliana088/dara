@@ -211,7 +211,7 @@ if (!isset($_SESSION['user_name'])) {
       <div class="card-footer bg-transparent border-0">
         <a href="sales.php" class="text-white text-decoration-none">More info <i class="bi bi-arrow-right"></i></a>
       </div>
-      <i class="bi bi-currency-dollar position-absolute" style="font-size: 6rem; opacity: 0.1; bottom: 10px; right: 10px;"></i>
+      <i class="bi bi-cash-coin position-absolute" style="font-size: 6rem; opacity: 0.1; bottom: 10px; right: 10px;"></i>
     </div>
   </div>
 
@@ -225,7 +225,7 @@ if (!isset($_SESSION['user_name'])) {
       <div class="card-footer bg-transparent border-0">
         <a href="categories.php" class="text-white text-decoration-none">More info <i class="bi bi-arrow-right"></i></a>
       </div>
-      <i class="bi bi-clipboard position-absolute" style="font-size: 6rem; opacity: 0.1; bottom: 10px; right: 10px;"></i>
+      <i class="bi bi-clipboard2-fill position-absolute" style="font-size: 6rem; opacity: 0.1; bottom: 10px; right: 10px;"></i>
     </div>
   </div>
 
