@@ -354,7 +354,7 @@ if ($_SESSION['user_name'] === 'Guest') {
     <div class="card">
       <!-- Add Product Button -->
       <div>
-        <button class="btn btn-danger ms-2 mb-2 mt-2" data-bs-toggle="modal" data-bs-target="#addProductModal">
+        <button class="btn ms-2 mb-2 mt-2" data-bs-toggle="modal" data-bs-target="#addProductModal" style="background-color:#dc7a91;color:#fff;width:153px;height:37px;">
           <i class="bi bi-plus-lg"></i> Add Product    
         </button> 
       </div>

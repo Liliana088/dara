@@ -246,6 +246,7 @@ if ($_SESSION['user_name'] === 'Guest') {
             <i class="bi bi-list"></i>
           </button>
         </div>
+
        <!-- User -->
         <div class="dropdown">
             <a class="dropdown-toggle text-white text-decoration-none" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -280,7 +281,7 @@ if ($_SESSION['user_name'] === 'Guest') {
       <div class="card">
         <!-- Add Category Button -->
         <div>
-          <button class="btn btn-danger ms-2 mb-2 mt-2" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+          <button class="btn ms-2 mb-2 mt-2" data-bs-toggle="modal" data-bs-target="#addCategoryModal" style="background-color:#dc7a91;color:#fff;width:153px;height:37px;">
             <i class="bi bi-plus-lg"></i> Add Category    
           </button> 
         </div>
