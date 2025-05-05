@@ -110,6 +110,10 @@ if (!isset($_SESSION['user_name'])) {
       margin-bottom: 1rem;
     }
 
+    .card-footer {
+      background-color:666B9E
+    }
+
     @media (max-width: 991px) {
       .sidebar {
         width: 0;
@@ -208,7 +212,7 @@ if (!isset($_SESSION['user_name'])) {
         <div style="font-size: 1.5rem; font-weight: bold;">₱11,832.00</div>
         <div>Sales</div>
       </div>
-      <div class="card-footer bg-transparent border-0">
+      <div class="card-footer border-0">
         <a href="sales.php" class="text-white text-decoration-none">More info <i class="bi bi-arrow-right"></i></a>
       </div>
       <i class="bi bi-cash-coin position-absolute" style="font-size: 6rem; opacity: 0.1; bottom: 10px; right: 10px;"></i>
@@ -222,7 +226,7 @@ if (!isset($_SESSION['user_name'])) {
         <div style="font-size: 1.5rem; font-weight: bold;">7</div>
         <div>Categories</div>
       </div>
-      <div class="card-footer bg-transparent border-0">
+      <div class="card-footer border-0">
         <a href="categories.php" class="text-white text-decoration-none">More info <i class="bi bi-arrow-right"></i></a>
       </div>
       <i class="bi bi-clipboard2-fill position-absolute" style="font-size: 6rem; opacity: 0.1; bottom: 10px; right: 10px;"></i>
@@ -236,7 +240,7 @@ if (!isset($_SESSION['user_name'])) {
         <div style="font-size: 1.5rem; font-weight: bold;">12</div>
         <div>Products</div>
       </div>
-      <div class="card-footer bg-transparent border-0">
+      <div class="card-footer border-0">
         <a href="products.php" class="text-white text-decoration-none">More info <i class="bi bi-arrow-right"></i></a>
       </div>
       <i class="bi bi-box-seam position-absolute" style="font-size: 6rem; opacity: 0.1; bottom: 10px; right: 10px;"></i>
