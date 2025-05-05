@@ -201,40 +201,49 @@ if (!isset($_SESSION['user_name'])) {
   <div class="main-content">
     <h2 class="section-header">Dashboard</h2>
     <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card text-white bg-primary">
-          <div class="card-body">
-            <h5 class="card-title">₱11,832.00</h5>
-            <p class="card-text">Sales</p>
-          </div>
-          <div class="card-footer text-white">
-            <a href="sales.php" class="text-white">More info <i class="bi bi-arrow-right"></i></a>
-          </div>
-        </div>
+  <!-- Sales Card -->
+  <div class="col-md-4">
+    <div class="card text-white position-relative" style="background-color: #7673C0;">
+      <div class="card-body">
+        <div style="font-size: 1.5rem; font-weight: bold;">₱11,832.00</div>
+        <div>Sales</div>
       </div>
-      <div class="col-md-4">
-        <div class="card text-white bg-info">
-          <div class="card-body">
-            <h5 class="card-title">7</h5>
-            <p class="card-text">Categories</p>
-          </div>
-          <div class="card-footer text-white">
-            <a href="categories.php" class="text-white">More info <i class="bi bi-arrow-right"></i></a>
-          </div>
-        </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="sales.php" class="text-white text-decoration-none">More info <i class="bi bi-arrow-right"></i></a>
       </div>
-      <div class="col-md-4">
-        <div class="card text-white bg-dark">
-          <div class="card-body">
-            <h5 class="card-title">12</h5>
-            <p class="card-text">Products</p>
-          </div>
-          <div class="card-footer text-white">
-            <a href="products.php" class="text-white">More info <i class="bi bi-arrow-right"></i></a>
-          </div>
-        </div>
-      </div>
+      <i class="bi bi-currency-dollar position-absolute" style="font-size: 6rem; opacity: 0.1; bottom: 10px; right: 10px;"></i>
     </div>
+  </div>
+
+  <!-- Categories Card -->
+  <div class="col-md-4">
+    <div class="card text-white position-relative" style="background-color: #3F417D;">
+      <div class="card-body">
+        <div style="font-size: 1.5rem; font-weight: bold;">7</div>
+        <div>Categories</div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="categories.php" class="text-white text-decoration-none">More info <i class="bi bi-arrow-right"></i></a>
+      </div>
+      <i class="bi bi-clipboard position-absolute" style="font-size: 6rem; opacity: 0.1; bottom: 10px; right: 10px;"></i>
+    </div>
+  </div>
+
+  <!-- Products Card -->
+  <div class="col-md-4">
+    <div class="card text-white position-relative" style="background-color: #824C83;">
+      <div class="card-body">
+        <div style="font-size: 1.5rem; font-weight: bold;">12</div>
+        <div>Products</div>
+      </div>
+      <div class="card-footer bg-transparent border-0">
+        <a href="products.php" class="text-white text-decoration-none">More info <i class="bi bi-arrow-right"></i></a>
+      </div>
+      <i class="bi bi-box-seam position-absolute" style="font-size: 6rem; opacity: 0.1; bottom: 10px; right: 10px;"></i>
+    </div>
+  </div>
+</div>
+
 
     <div class="sales-graph mt-4">
       <h4 class="text-center">SALES GRAPH</h4>
