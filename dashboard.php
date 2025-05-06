@@ -4,6 +4,28 @@ if (!isset($_SESSION['user_name'])) {
     header("Location: login.php");
     exit();
 }
+
+include "db_conn.php"; //connect to database
+
+//for the low stock
+$lowStockThreshold = 5;
+$lowStockQuery = "SELECT COUNT(*) as low_count FROM products WHERE Stock <= $lowStockThreshold";
+$lowStockResult = mysqli_query($conn, $lowStockQuery);
+$lowStockData = mysqli_fetch_assoc($lowStockResult);
+$lowStockCount = $lowStockData['low_count'];
+
+// Show modal only once per session
+if (!isset($_SESSION['shown_low_stock_popup'])) {
+  $query = "SELECT COUNT(*) as low_stock_count FROM products WHERE stock <= 5";
+  $result = mysqli_query($conn, $query);
+  $data = mysqli_fetch_assoc($result);
+
+  if ($data['low_stock_count'] > 0) {
+      $_SESSION['show_low_stock_modal'] = true;
+  }
+
+  $_SESSION['shown_low_stock_popup'] = true;
+}
 ?>
 
 <!DOCTYPE html>
@@ -237,8 +259,9 @@ if (!isset($_SESSION['user_name'])) {
   <div class="col-md-4">
     <div class="card text-white position-relative" style="background-color: #824C83;">
       <div class="card-body">
-        <div style="font-size: 1.5rem; font-weight: bold;">12</div>
-        <div>Products</div>
+        <div style="font-size: 1.5rem; font-weight: bold;"><?php echo $lowStockCount; ?>
+        </div>
+        <div>Products With Low Stock</div>
       </div>
       <div class="card-footer border-0">
         <a href="products.php" class="text-white text-decoration-none">More info <i class="bi bi-arrow-right"></i></a>
@@ -248,12 +271,31 @@ if (!isset($_SESSION['user_name'])) {
   </div>
 </div>
 
-
     <div class="sales-graph mt-4">
       <h4 class="text-center">SALES GRAPH</h4>
       <canvas id="salesChart" height="100"></canvas>
     </div>
   </div>
+
+
+<!-- Low Stock Modal -->
+<div class="modal fade" id="lowStockModal" tabindex="-1" aria-labelledby="lowStockModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #393E75; color: #fff;">
+        <h5 class="modal-title" id="lowStockModalLabel">Low Stock Alert</h5>
+      </div>
+      <div class="modal-body">
+        Some products are low in stock. Please check your inventory.
+      </div>
+      <div class="modal-footer">
+        <a href="products.php?lowstock=1" class="btn" style="background-color: #393E75; color: #fff;">View Low Stock Products</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Dismiss</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <!-- Scripts -->
   <script src="bootstrap-offline/js/bootstrap.bundle.min.js"></script>
@@ -289,5 +331,14 @@ if (!isset($_SESSION['user_name'])) {
       }
     });
   </script>
+  <?php if (isset($_SESSION['show_low_stock_modal']) && $_SESSION['show_low_stock_modal']): ?>
+    <script>
+      var myModal = new bootstrap.Modal(document.getElementById('lowStockModal'));
+      window.addEventListener('load', () => {
+        myModal.show();
+      });
+    </script>
+<?php unset($_SESSION['show_low_stock_modal']); endif; ?>
+
 </body>
 </html>

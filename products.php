@@ -13,6 +13,17 @@ if ($_SESSION['user_name'] === 'Guest') {
     header("Location: dashboard.php");
     exit();
 }
+
+$lowStockThreshold = 5;
+
+if (isset($_GET['lowstock']) && $_GET['lowstock'] == 1) {
+    $sql = "SELECT * FROM products WHERE Stock <= $lowStockThreshold";
+} else {
+    $sql = "SELECT * FROM products";
+}
+
+$result = mysqli_query($conn, $sql);
+
 ?>
 
 <!DOCTYPE html>
@@ -353,11 +364,18 @@ if ($_SESSION['user_name'] === 'Guest') {
 
     <div class="card">
       <!-- Add Product Button -->
-      <div>
-        <button class="btn ms-2 mb-2 mt-2" data-bs-toggle="modal" data-bs-target="#addProductModal" style="background-color:#dc7a91;color:#fff;width:153px;height:37px;">
-          <i class="bi bi-plus-lg"></i> Add Product    
-        </button> 
-      </div>
+      <div class="d-flex justify-content-between align-items-center flex-wrap">
+  <!-- Left side (Add Product) -->
+  <button class="btn ms-2 mb-2 mt-2" data-bs-toggle="modal" data-bs-target="#addProductModal" style="background-color:#dc7a91;color:#fff;width:153px;height:37px;">
+    <i class="bi bi-plus-lg"></i> Add Product    
+  </button>
+
+  <!-- Right side (View Low Stock Only & View All) -->
+  <div class="mb-1 mt-2 me-2">
+    <a href="products.php?lowstock=1" class="btn btn-warning me-1">View Low Stock Only</a>
+    <a href="products.php" class="btn btn-secondary">View All</a>
+  </div>
+</div>
 
       <div class="card-header bg-light d-flex justify-content-between align-items-center">
         <div>
@@ -372,7 +390,7 @@ if ($_SESSION['user_name'] === 'Guest') {
       <div class="card-body p-0">
         <table class="table product-table mb-0">
           <thead class="table-light">
-            <tr>
+          <tr>
               <th scope="col">#</th>
               <th scope="col">Code</th>
               <th scope="col">Category</th>
@@ -386,17 +404,23 @@ if ($_SESSION['user_name'] === 'Guest') {
           </thead>
           <tbody id="productTableBody">
             <?php
-              $sql = "SELECT * FROM products";
-              $result = mysqli_query($conn, $sql);
               $count = 1;
               while ($row = mysqli_fetch_assoc($result)) {
+
+                $stock = (int)$row['Stock'];
+                $lowStock = $stock <= 5;
             ?>
-              <tr>
+              <tr class="<?php echo $lowStock ? 'table-warning' : ''; ?>">
                 <td><?php echo $count++; ?></td>
                 <td><?php echo htmlspecialchars($row['Code']); ?></td>
                 <td><?php echo htmlspecialchars($row['Category']); ?></td>
                 <td><?php echo htmlspecialchars($row['Description']); ?></td>
-                <td><?php echo htmlspecialchars($row['Stock']); ?></td>
+                <td>
+                  <?php echo $stock; ?>
+                  <?php if ($lowStock): ?>
+                    <span class="badge bg-danger">Low</span>
+                  <?php endif; ?>
+                </td>
                 <td><?php echo htmlspecialchars($row['Buying Price']); ?></td>
                 <td><?php echo htmlspecialchars($row['Selling Price']); ?></td>
                 <td><?php echo htmlspecialchars($row['Date Added']); ?></td>
@@ -457,6 +481,54 @@ if ($_SESSION['user_name'] === 'Guest') {
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="editProductForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id" id="editProductId">
+          <div class="mb-3">
+            <label class="form-label">Product Code</label>
+            <input type="text" class="form-control" name="code" id="editCodeInput" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input type="text" class="form-control" name="description" id="editDescriptionInput" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Stock</label>
+            <input type="number" class="form-control" name="stock" id="editStockInput" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Buying Price</label>
+            <input type="number" step="0.01" class="form-control" name="buying_price" id="editBuyingPriceInput" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Markup %</label>
+            <input type="number" step="0.01" class="form-control" name="markup" id="editMarkupInput" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Selling Price</label>
+            <input type="number" step="0.01" class="form-control" name="selling_price" id="editSellingPriceInput" readonly>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select class="form-select" name="category" id="editCategorySelect" required></select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Changes</button>
         </div>
       </div>
     </form>
@@ -610,6 +682,60 @@ window.addEventListener("DOMContentLoaded", updateTable);
             xhr.send(params.toString());
         });
     });
+
+    function populateEditModal(id, code, description, stock, buyingPrice, sellingPrice) {
+    // Set values in the modal
+    document.getElementById('editProductId').value = id;
+    document.getElementById('editCodeInput').value = code;
+    document.getElementById('editDescriptionInput').value = description;
+    document.getElementById('editStockInput').value = stock;
+    document.getElementById('editBuyingPriceInput').value = buyingPrice;
+    document.getElementById('editSellingPriceInput').value = sellingPrice;
+    
+    // Fetch categories and set the selected category
+    $.ajax({
+        url: 'getCategories.php',
+        method: 'GET',
+        success: function(data) {
+            const categories = JSON.parse(data);
+            const categorySelect = document.getElementById('editCategorySelect');
+            categorySelect.innerHTML = ''; // Clear existing options
+
+            categories.forEach(function(category) {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.category;
+                
+                // Set the selected category based on current product
+                if (category.id === sellingPrice) {
+                    option.selected = true;
+                }
+
+                categorySelect.appendChild(option);
+            });
+        }
+    });
+}
+$('#editProductForm').submit(function(e) {
+    e.preventDefault();
+
+    const formData = $(this).serialize();
+    
+    $.ajax({
+        url: 'edit_product.php',
+        method: 'POST',
+        data: formData,
+        success: function(response) {
+            if (response === 'success') {
+                alert('Product updated successfully!');
+                location.reload(); // Reload the page to show the updated data
+            } else {
+                alert('Error updating product.');
+            }
+        }
+    });
+});
+
    </script>
  </body>                                                       
 </html>
