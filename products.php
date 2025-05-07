@@ -17,9 +17,16 @@ if ($_SESSION['user_name'] === 'Guest') {
 $lowStockThreshold = 5;
 
 if (isset($_GET['lowstock']) && $_GET['lowstock'] == 1) {
-    $sql = "SELECT * FROM products WHERE Stock <= $lowStockThreshold";
+  $sql = "SELECT products.*, categories.category AS category_name 
+  FROM products 
+  LEFT JOIN categories ON products.Category = categories.id 
+  WHERE Stock <= $lowStockThreshold";
+
 } else {
-    $sql = "SELECT * FROM products";
+    $sql = "SELECT products.*, categories.category AS category_name 
+    FROM products 
+    LEFT JOIN categories ON products.Category = categories.id";
+
 }
 
 $result = mysqli_query($conn, $sql);
@@ -36,289 +43,7 @@ $result = mysqli_query($conn, $sql);
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/x-icon" href="img/daraa.ico">
-  <style>
-    body {
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-
-    .navbar {
-      background-color: #393E75;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1100;
-      height: 56px;
-    }
-
-    .navbar .navbar-brand {
-      display: flex;
-      align-items: center;
-    }
-
-    .navbar-brand img.logo {
-      height: 40px;
-      margin-left: 10px;
-    }
-
-    .navbar-toggler {
-      font-size: 1.3rem;
-      margin-left: auto;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 56px;
-      left: 0;
-      height: calc(100vh - 56px);
-      width: 60px;
-      background-color: #5c47a1;
-      transition: width 0.3s ease;
-      overflow-x: hidden;
-      z-index: 1000;
-    }
-
-    .sidebar.expand {
-      width: 200px;
-    }
-
-    .sidebar .nav-link {
-      color: #fff;
-      display: flex;
-      align-items: center;
-      padding: 12px 15px;
-    }
-
-    .sidebar .nav-link i {
-      font-size: 1.2rem;
-      width: 24px;
-      text-align: center;
-    }
-
-    .sidebar .nav-link span {
-      display: none;
-      margin-left: 10px;
-      white-space: nowrap;
-    }
-
-    .sidebar.expand .nav-link span {
-      display: inline;
-    }
-
-    .main-content {
-      margin-left: 60px;
-      padding: 80px 20px 20px 20px;
-      transition: margin-left 0.3s ease;
-    }
-
-    .sidebar.expand ~ .main-content {
-      margin-left: 200px;
-    }
-
-    .card {
-      margin-top: 20px;
-    }
-
-    .category-table th,
-    .category-table td {
-      vertical-align: middle;
-    }
-
-    @media (max-width: 991px) {
-      .sidebar {
-        width: 0;
-      }
-
-      .sidebar.expand {
-        width: 200px;
-      }
-
-      .main-content {
-        margin-left: 0;
-      }
-
-      .sidebar.expand ~ .main-content {
-        margin-left: 200px;
-      }
-    }
-
-    /* icon buttons */
-    .icon-box {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      font-size: 16px;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-    }
-
-    .edit-icon {
-      background-color: #A9CCE9;
-    }
-
-    .delete-icon {
-      background-color: #AF0F0F;
-    }
-
-    /* modal styling from design */
-    .box {
-      width: 570px;
-      height: 318px;
-    }
-
-    .box .group {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .box .overlap {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .rectangle {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background-color: #ffbbb5;
-    }
-
-    .div {
-      position: absolute;
-      width: 100%;
-      height: 61px;
-      background-color: #dc7a91;
-    }
-
-    .text-wrapper {
-      position: absolute;
-      top: 16px;
-      left: 18px;
-      font-family: "Inter", sans-serif;
-      color: #ffffff;
-      font-size: 24px;
-    }
-
-    .rectangle-2 {
-      position: absolute;
-      width: 100%;
-      height: 77px;
-      bottom: 0;
-      background-color: #ffbbb5;
-      border-top: 1px solid #b1b1b1;
-    }
-
-    .close-button .overlap-group {
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      text-align: center;
-      line-height: 51px;
-      font-size: 18px;
-      color: #0e0d0d;
-    }
-
-    .close-button {
-      position: absolute;
-      left: 18px;
-      bottom: 13px;
-      width: 84px;
-      height: 51px;
-    }
-
-    .fa-remove {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      font-size: 20px;
-      color: #ffffff;
-    }
-
-    .modal-dialog {
-      margin-top: 80px; /* adjustment of modal */
-    }
-
-    .modal-dialog {
-      max-width: 570px;
-    }
-    .modal-content {
-      height: 810px;
-      background-color: #fff;
-      border-radius: 0;
-      position: relative;
-    }
-
-    .modal-header {
-      background-color: #dc7a91;
-      border-bottom: none;
-    }
-
-    .modal-title {
-      color: white;
-      font-size: 24px;
-    }
-
-    .btn-close-white {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.3rem;
-    }
-
-    .form-control, .form-select {
-      border-color: #b1b1b1;
-    }
-
-    .bottom-bar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: #ffbbb5;
-      border-top: 1px solid #b1b1b1;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .btn-save {
-      background-color: #dc7a91;
-      color: #fff;
-      border: none;
-    }
-
-    .btn-close-modal {
-      background-color: #fff;
-      border: 1px solid #000;
-      color: #000;
-    }
-
-    .input-group-icon {
-      position: relative;
-    }
-
-    .input-group-icon i {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #999;
-    }
-
-    .form-section {
-      padding: 20px;
-      padding-bottom: 120px;
-      overflow-y: auto;
-      height: 100%;
-    }
-  </style>
+  <link href="/dara/products.css" rel="stylesheet" />
 </head>
 <body>
   <!-- Navbar -->
@@ -413,7 +138,7 @@ $result = mysqli_query($conn, $sql);
               <tr class="<?php echo $lowStock ? 'table-warning' : ''; ?>">
                 <td><?php echo $count++; ?></td>
                 <td><?php echo htmlspecialchars($row['Code']); ?></td>
-                <td><?php echo htmlspecialchars($row['Category']); ?></td>
+                <td><?php echo htmlspecialchars($row['category_name']); ?></td>
                 <td><?php echo htmlspecialchars($row['Description']); ?></td>
                 <td>
                   <?php echo $stock; ?>
@@ -425,7 +150,8 @@ $result = mysqli_query($conn, $sql);
                 <td><?php echo htmlspecialchars($row['Selling Price']); ?></td>
                 <td><?php echo htmlspecialchars($row['Date Added']); ?></td>
                 <td>
-                  <a href="#" class="icon-box edit-icon" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $row['id']; ?>', '<?php echo htmlspecialchars($row['Code']); ?>', '<?php echo htmlspecialchars($row['Description']); ?>', '<?php echo htmlspecialchars($row['Stock']); ?>', '<?php echo htmlspecialchars($row['Buying Price']); ?>', '<?php echo htmlspecialchars($row['Selling Price']); ?>')">
+                  <a href="#" class="icon-box edit-icon" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $row['id']; ?>', '<?php echo htmlspecialchars($row['Code']); ?>', '<?php echo htmlspecialchars($row['Description']); ?>', '<?php echo htmlspecialchars($row['Stock']); ?>', '<?php echo htmlspecialchars($row['Buying Price']); ?>', '<?php echo htmlspecialchars($row['Selling Price']); ?>', '<?php echo $row['category_name']; ?>')"
+                  >
                     <i class="bi bi-pencil-fill"></i>
                   </a>
                   <a href="delete_product.php?id=<?php echo $row['id']; ?>" class="icon-box delete-icon" onclick="return confirm('Are you sure you want to delete this product?');">
@@ -497,7 +223,7 @@ $result = mysqli_query($conn, $sql);
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <input type="hidden" name="id" id="editProductId">
+          <input type="hidden" name="id" id="editProductIdInput">
           <div class="mb-3">
             <label class="form-label">Product Code</label>
             <input type="text" class="form-control" name="code" id="editCodeInput" required>
@@ -534,6 +260,7 @@ $result = mysqli_query($conn, $sql);
     </form>
   </div>
 </div>
+
 
 
 <!-- Scripts -->
@@ -683,58 +410,77 @@ window.addEventListener("DOMContentLoaded", updateTable);
         });
     });
 
-    function populateEditModal(id, code, description, stock, buyingPrice, sellingPrice) {
-    // Set values in the modal
-    document.getElementById('editProductId').value = id;
+
+
+
+
+    function populateEditModal(id, code, description, stock, buyingPrice, sellingPrice, categoryId) {
+    // Set the input fields with the provided product details
+    document.getElementById('editProductIdInput').value = id;
     document.getElementById('editCodeInput').value = code;
     document.getElementById('editDescriptionInput').value = description;
     document.getElementById('editStockInput').value = stock;
     document.getElementById('editBuyingPriceInput').value = buyingPrice;
     document.getElementById('editSellingPriceInput').value = sellingPrice;
-    
-    // Fetch categories and set the selected category
-    $.ajax({
-        url: 'getCategories.php',
-        method: 'GET',
-        success: function(data) {
-            const categories = JSON.parse(data);
-            const categorySelect = document.getElementById('editCategorySelect');
-            categorySelect.innerHTML = ''; // Clear existing options
 
-            categories.forEach(function(category) {
-                const option = document.createElement('option');
-                option.value = category.id;
-                option.textContent = category.category;
-                
-                // Set the selected category based on current product
-                if (category.id === sellingPrice) {
-                    option.selected = true;
-                }
+    // Calculate markup dynamically (Markup = (Selling Price - Buying Price) / Buying Price * 100)
+    const markup = ((sellingPrice - buyingPrice) / buyingPrice) * 100;
+    document.getElementById('editMarkupInput').value = markup.toFixed(); // Display markup
 
-                categorySelect.appendChild(option);
-            });
-        }
-    });
+    // Fetch categories and populate the category dropdown
+    fetch('getCategories.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.categories && Array.isArray(data.categories)) {
+                const categoryDropdown = document.getElementById('editCategorySelect');
+                categoryDropdown.innerHTML = ''; // Clear existing options
+                categoryDropdown.innerHTML = '<option value="">Select Category</option>'; // Default option
+
+                data.categories.forEach(function (category) {
+                    const isSelected = category.id == categoryId ? 'selected' : '';
+                    categoryDropdown.innerHTML += `<option value="${category.id}" ${isSelected}>${category.category}</option>`;
+                });
+            } else {
+                console.error('Invalid response format from getCategories.php');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching categories:', error);
+        });
+
+    // Show the modal
+    const editModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+    editModal.show();
 }
-$('#editProductForm').submit(function(e) {
+
+//sellling price adjustment
+function calculateSellingPrice() {
+    const buyingPrice = parseFloat(document.getElementById("editBuyingPriceInput").value) || 0;
+    const markup = parseFloat(document.getElementById("editMarkupInput").value) || 0;
+    const sellingPrice = buyingPrice + (buyingPrice * (markup / 100));
+    document.getElementById("editSellingPriceInput").value = sellingPrice.toFixed(2);
+  }
+
+  document.getElementById("editBuyingPriceInput").addEventListener("input", calculateSellingPrice);
+  document.getElementById("editMarkupInput").addEventListener("input", calculateSellingPrice);
+
+
+// edit submit
+$('#editProductForm').on('submit', function(e) {
     e.preventDefault();
 
-    const formData = $(this).serialize();
-    
     $.ajax({
         url: 'edit_product.php',
-        method: 'POST',
-        data: formData,
+        type: 'POST',
+        data: $(this).serialize(),
         success: function(response) {
-            if (response === 'success') {
-                alert('Product updated successfully!');
-                location.reload(); // Reload the page to show the updated data
-            } else {
-                alert('Error updating product.');
-            }
+            alert(response); // This is where "Invalid" is being alerted
         }
     });
 });
+
+
+
 
    </script>
  </body>                                                       
