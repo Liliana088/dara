@@ -147,10 +147,10 @@ $result = mysqli_query($conn, $sql);
                   <?php endif; ?>
                 </td>
                 <td><?php echo htmlspecialchars($row['Buying Price']); ?></td>
-                <td><?php echo htmlspecialchars($row['Selling Price']); ?></td>
+                <td><?php echo htmlspecialchars($row['Selling_Price']); ?></td>
                 <td><?php echo htmlspecialchars($row['Date Added']); ?></td>
                 <td>
-                  <a href="#" class="icon-box edit-icon" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $row['id']; ?>', '<?php echo htmlspecialchars($row['Code']); ?>', '<?php echo htmlspecialchars($row['Description']); ?>', '<?php echo htmlspecialchars($row['Stock']); ?>', '<?php echo htmlspecialchars($row['Buying Price']); ?>', '<?php echo htmlspecialchars($row['Selling Price']); ?>', '<?php echo $row['category_name']; ?>')"
+                  <a href="#" class="icon-box edit-icon" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $row['id']; ?>', '<?php echo htmlspecialchars($row['Code']); ?>', '<?php echo htmlspecialchars($row['Description']); ?>', '<?php echo htmlspecialchars($row['Stock']); ?>', '<?php echo htmlspecialchars($row['Buying Price']); ?>', '<?php echo htmlspecialchars($row['Selling_Price']); ?>', '<?php echo $row['category_name']; ?>')"
                   >
                     <i class="bi bi-pencil-fill"></i>
                   </a>
