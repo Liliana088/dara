@@ -26,7 +26,6 @@ if (isset($_GET['lowstock']) && $_GET['lowstock'] == 1) {
     $sql = "SELECT products.*, categories.category AS category_name 
     FROM products 
     LEFT JOIN categories ON products.Category = categories.id";
-
 }
 
 $result = mysqli_query($conn, $sql);
@@ -43,7 +42,7 @@ $result = mysqli_query($conn, $sql);
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="icon" type="image/x-icon" href="img/daraa.ico">
-  <link href="/dara/products.css" rel="stylesheet" />
+  <link href="/dara/css/products.css" rel="stylesheet" />
 </head>
 <body>
   <!-- Navbar -->
@@ -95,7 +94,7 @@ $result = mysqli_query($conn, $sql);
     <i class="bi bi-plus-lg"></i> Add Product    
   </button>
 
-  <!-- Right side (View Low Stock Only & View All) -->
+  <!-- Right sid  e (View Low Stock Only & View All) -->
   <div class="mb-1 mt-2 me-2">
     <a href="products.php?lowstock=1" class="btn btn-warning me-1">View Low Stock Only</a>
     <a href="products.php" class="btn btn-secondary">View All</a>
@@ -121,8 +120,8 @@ $result = mysqli_query($conn, $sql);
               <th scope="col">Category</th>
               <th scope="col">Description</th>
               <th scope="col">Stock</th>
-              <th scope="col">Buying Price</th>
-              <th scope="col">Selling Price</th>
+              <th scope="col">Cost</th>
+              <th scope="col">Markup %</th>
               <th scope="col">Date Added</th>
               <th scope="col">Action</th>
             </tr>
@@ -146,11 +145,11 @@ $result = mysqli_query($conn, $sql);
                     <span class="badge bg-danger">Low</span>
                   <?php endif; ?>
                 </td>
-                <td><?php echo htmlspecialchars($row['Buying Price']); ?></td>
-                <td><?php echo htmlspecialchars($row['Selling_Price']); ?></td>
+                <td><?php echo htmlspecialchars($row['cost']); ?></td>
+                <td><?php echo htmlspecialchars($row['markup']). '%'; ?></td>
                 <td><?php echo htmlspecialchars($row['Date Added']); ?></td>
                 <td>
-                  <a href="#" class="icon-box edit-icon" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $row['id']; ?>', '<?php echo htmlspecialchars($row['Code']); ?>', '<?php echo htmlspecialchars($row['Description']); ?>', '<?php echo htmlspecialchars($row['Stock']); ?>', '<?php echo htmlspecialchars($row['Buying Price']); ?>', '<?php echo htmlspecialchars($row['Selling_Price']); ?>', '<?php echo $row['category_name']; ?>')"
+                  <a href="#" class="icon-box edit-icon" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $row['id']; ?>', '<?php echo htmlspecialchars($row['Code']); ?>', '<?php echo htmlspecialchars($row['Description']); ?>', '<?php echo htmlspecialchars($row['Stock']); ?>', '<?php echo htmlspecialchars($row['cost']); ?>', '<?php echo htmlspecialchars($row['markup']); ?>', '<?php echo $row['Category']; ?>')"
                   >
                     <i class="bi bi-pencil-fill"></i>
                   </a>
@@ -189,7 +188,7 @@ $result = mysqli_query($conn, $sql);
             <input type="number" class="form-control" name="stock" id="stockInput" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Buying Price</label>
+            <label class="form-label">Cost</label>
             <input type="number" step="0.01" class="form-control" name="buying_price" id="buyingPriceInput" required>
           </div>
           <div class="mb-3">
@@ -220,33 +219,33 @@ $result = mysqli_query($conn, $sql);
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <input type="hidden" name="id" id="editProductIdInput">
+          <input type="hidden" name="id" id="editId">
           <div class="mb-3">
             <label class="form-label">Product Code</label>
-            <input type="text" class="form-control" name="code" id="editCodeInput" required>
+            <input type="text" class="form-control" name="code" id="editCode" readonly required>
           </div>
           <div class="mb-3">
             <label class="form-label">Description</label>
-            <input type="text" class="form-control" name="description" id="editDescriptionInput" required>
+            <input type="text" class="form-control" name="description" id="editDescription" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Stock</label>
-            <input type="number" class="form-control" name="stock" id="editStockInput" required>
+            <input type="number" class="form-control" name="stock" id="editStock" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Buying Price</label>
-            <input type="number" step="0.01" class="form-control" name="buying_price" id="editBuyingPriceInput" required>
+            <label class="form-label">Cost</label>
+            <input type="number" step="0.01" class="form-control" name="buying_price" id="editBuyingPrice" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Markup %</label>
-            <input type="number" step="0.01" class="form-control" name="markup" id="editMarkupInput" required>
+            <input type="number" step="0.01" class="form-control" name="markup" id="editMarkup" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Selling Price</label>
-            <input type="number" step="0.01" class="form-control" name="selling_price" id="editSellingPriceInput" readonly>
+            <input type="number" step="0.01" class="form-control" name="selling_price" id="editSellingPrice" readonly>
           </div>
           <div class="mb-3">
             <label class="form-label">Category</label>
@@ -254,116 +253,81 @@ $result = mysqli_query($conn, $sql);
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Changes</button>
+          <button type="submit" class="btn btn-primary"  id="saveEditBtn">Save Changes</button>
         </div>
       </div>
     </form>
   </div>
 </div>
 
-
-
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
-// Filter and limit table rows
-function updateTable() {
-  const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-  let showCount = parseInt(document.getElementById("showEntries").value, 10) || 1;
+    // Filter and limit table rows
+    function updateTable() {
+    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+    let showCount = parseInt(document.getElementById("showEntries").value, 10) || 1;
 
-  if (showCount < 1) showCount = 1;
+    if (showCount < 1) showCount = 1;
 
-  const tableBody = document.getElementById("productTableBody"); // ← Correct ID
-  const rows = tableBody.querySelectorAll("tr");
+    const tableBody = document.getElementById("productTableBody"); // Correct ID
+    const rows = tableBody.querySelectorAll("tr");
 
-  let visibleCount = 0;
+    let visibleCount = 0;
 
-  rows.forEach(row => {
-    const cells = row.querySelectorAll("td");
-    const rowMatches = Array.from(cells).some(cell =>
-      cell.textContent.toLowerCase().includes(searchTerm)
-    );
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const rowMatches = Array.from(cells).some(cell =>
+        cell.textContent.toLowerCase().includes(searchTerm)
+        );
 
-    if (rowMatches && visibleCount < showCount) {
-      row.style.display = "";
-      visibleCount++;
-    } else {
-      row.style.display = "none";
+        if (rowMatches && visibleCount < showCount) {
+        row.style.display = "";
+        visibleCount++;
+        } else {
+        row.style.display = "none";
+        }
+    });
     }
-  });
-}
 
-
-document.getElementById("searchInput").addEventListener("input", updateTable);
-document.getElementById("showEntries").addEventListener("input", updateTable);
-
-// Initial load
-window.addEventListener("DOMContentLoaded", updateTable);
-
-
+    // Add event listeners for input elements
     document.getElementById("searchInput").addEventListener("input", updateTable);
     document.getElementById("showEntries").addEventListener("input", updateTable);
 
     // Initial load
     window.addEventListener("DOMContentLoaded", updateTable);
-   
+
     // Toggle Sidebar
     function toggleSidebar() {
-        const sidebar = document.getElementById("sidebarMenu");
-        sidebar.classList.toggle("expand");
+    const sidebar = document.getElementById("sidebarMenu");
+    sidebar.classList.toggle("expand");
     }
 
-    // Adjust selling price based on markup
-    const markupInput = document.getElementById('markupInput');
-    const buyingPriceInput = document.getElementById('buyingPriceInput');
-    const sellingPriceInput = document.getElementById('sellingPriceInput');
 
-    markupInput.addEventListener('input', () => {
-        const markupPercentage = parseFloat(markupInput.value) || 0;
-        const buyingPrice = parseFloat(buyingPriceInput.value) || 0;
-
-        if (buyingPrice > 0) {
-            const sellingPrice = buyingPrice + (buyingPrice * (markupPercentage / 100));
-            sellingPriceInput.value = sellingPrice.toFixed(2);
-        } else {
-            sellingPriceInput.value = '';
-        }
-    });
-
-    buyingPriceInput.addEventListener('input', () => {
-        const markupPercentage = parseFloat(markupInput.value) || 0;
-        const buyingPrice = parseFloat(buyingPriceInput.value) || 0;
-
-        if (buyingPrice > 0) {
-            const sellingPrice = buyingPrice + (buyingPrice * (markupPercentage / 100));
-            sellingPriceInput.value = sellingPrice.toFixed(2);
-        } else {
-            sellingPriceInput.value = '';
-        }
-    });
-
-    // Fetch categories from the database and populate the dropdown
+    // Fetch categories from the database and populate the dropdown in the "Add Product" modal
     $(document).ready(function() {
 
-        // Using AJAX for category population
-        $.ajax({
+      let cachedCategories = [];
+
+$.ajax({
     url: 'getCategories.php',
     type: 'GET',
     dataType: 'json',
     success: function(response) {
-        console.log(response);  // Log the response to check the data
-        if (response && response.categories && Array.isArray(response.categories)) {
-            const categoryDropdown = $('#categorySelect');
-            categoryDropdown.empty(); // Clear existing options
-            categoryDropdown.append('<option value="">Select Category</option>'); // Default option
+        if (response && Array.isArray(response.categories)) {
+            cachedCategories = response.categories;
+
+            const addSelect = $('#categorySelect');
+            const editSelect = $('#editCategorySelect');
+
+            addSelect.empty().append('<option value="">Select Category</option>');
+            editSelect.empty().append('<option value="">Select Category</option>');
 
             response.categories.forEach(function(category) {
-                categoryDropdown.append(`<option value="${category.id}">${category.category}</option>`);
+                const option = `<option value="${category.id}">${category.category}</option>`;
+                addSelect.append(option);
+                editSelect.append(option);
             });
-        } else {
-            console.error('Invalid response format from getCategories.php');
         }
     },
     error: function(xhr, status, error) {
@@ -374,14 +338,15 @@ window.addEventListener("DOMContentLoaded", updateTable);
 
         // Handle product saving
         document.getElementById("saveProductBtn").addEventListener("click", function () {
-            const category = document.getElementById("categorySelect").value;
+            const category = document.getElementById("categorySelect").value; // Get selected category ID from the dropdown
             const code = document.getElementById("codeInput").value.trim();
             const description = document.getElementById("descriptionInput").value.trim();
             const stock = document.getElementById("stockInput").value.trim();
             const buyingPrice = document.getElementById("buyingPriceInput").value.trim();
-            const sellingPrice = document.getElementById("sellingPriceInput").value.trim();
+            const markup = document.getElementById("markupInput").value.trim();
 
-            if (!category || !code || !description || !stock || !buyingPrice || !sellingPrice) {
+            // Validate the inputs
+            if (!category || !code || !description || !stock || !buyingPrice || !markup) {
                 alert("Please fill in all fields.");
                 return;
             }
@@ -396,7 +361,7 @@ window.addEventListener("DOMContentLoaded", updateTable);
                 description: description,
                 stock: stock,
                 buying_price: buyingPrice,
-                selling_price: sellingPrice
+                markup: markup
             });
 
             xhr.onreadystatechange = function () {
@@ -409,64 +374,9 @@ window.addEventListener("DOMContentLoaded", updateTable);
             xhr.send(params.toString());
         });
     });
-
-
-
-
-
-    function populateEditModal(id, code, description, stock, buyingPrice, sellingPrice, categoryId) {
-    // Set the input fields with the provided product details
-    document.getElementById('editProductIdInput').value = id;
-    document.getElementById('editCodeInput').value = code;
-    document.getElementById('editDescriptionInput').value = description;
-    document.getElementById('editStockInput').value = stock;
-    document.getElementById('editBuyingPriceInput').value = buyingPrice;
-    document.getElementById('editSellingPriceInput').value = sellingPrice;
-
-    // Calculate markup dynamically (Markup = (Selling Price - Buying Price) / Buying Price * 100)
-    const markup = ((sellingPrice - buyingPrice) / buyingPrice) * 100;
-    document.getElementById('editMarkupInput').value = markup.toFixed(); // Display markup
-
-    // Fetch categories and populate the category dropdown
-    fetch('getCategories.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data && data.categories && Array.isArray(data.categories)) {
-                const categoryDropdown = document.getElementById('editCategorySelect');
-                categoryDropdown.innerHTML = ''; // Clear existing options
-                categoryDropdown.innerHTML = '<option value="">Select Category</option>'; // Default option
-
-                data.categories.forEach(function (category) {
-                    const isSelected = category.id == categoryId ? 'selected' : '';
-                    categoryDropdown.innerHTML += `<option value="${category.id}" ${isSelected}>${category.category}</option>`;
-                });
-            } else {
-                console.error('Invalid response format from getCategories.php');
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching categories:', error);
-        });
-
-    // Show the modal
-    const editModal = new bootstrap.Modal(document.getElementById('editProductModal'));
-    editModal.show();
-}
-
-//sellling price adjustment
-function calculateSellingPrice() {
-    const buyingPrice = parseFloat(document.getElementById("editBuyingPriceInput").value) || 0;
-    const markup = parseFloat(document.getElementById("editMarkupInput").value) || 0;
-    const sellingPrice = buyingPrice + (buyingPrice * (markup / 100));
-    document.getElementById("editSellingPriceInput").value = sellingPrice.toFixed(2);
-  }
-
-  document.getElementById("editBuyingPriceInput").addEventListener("input", calculateSellingPrice);
-  document.getElementById("editMarkupInput").addEventListener("input", calculateSellingPrice);
-
-
-// edit submit
-$('#editProductForm').on('submit', function(e) {
+    
+    // Handle edit submit
+    $('#editProductForm').on('submit', function(e) {
     e.preventDefault();
 
     $.ajax({
@@ -474,14 +384,122 @@ $('#editProductForm').on('submit', function(e) {
         type: 'POST',
         data: $(this).serialize(),
         success: function(response) {
-            alert(response); // This is where "Invalid" is being alerted
+        alert(response); // Alert the response from the server
         }
     });
+    });
+</script>
+<script>
+function populateEditModal(id, code, description, stock, cost, markup, categoryId) {
+  // Set field values
+  document.getElementById('editId').value = id;
+  document.getElementById('editCode').value = code;
+  document.getElementById('editDescription').value = description;
+  document.getElementById('editStock').value = stock;
+  document.getElementById('editBuyingPrice').value = cost;
+  document.getElementById('editMarkup').value = markup;
+
+  var sellingPrice = parseFloat(cost) + (parseFloat(cost) * parseFloat(markup) / 100);
+  document.getElementById('editSellingPrice').value = sellingPrice.toFixed(2);
+
+  // Fetch categories, then set the selected value
+  $.ajax({
+    url: 'getCategories.php',
+    type: 'GET',
+    dataType: 'json',
+    success: function(response) {
+      if (response && response.categories && Array.isArray(response.categories)) {
+        const categoryDropdown = $('#editCategorySelect');
+        categoryDropdown.empty();
+        categoryDropdown.append('<option value="">Select Category</option>');
+
+        response.categories.forEach(function(cat) {
+          const selected = cat.id == categoryId ? 'selected' : '';
+          categoryDropdown.append(`<option value="${cat.id}" ${selected}>${cat.category}</option>`);
+        });
+      } else {
+        console.error('Invalid response format from getCategories.php');
+      }
+    },
+    error: function(xhr, status, error) {
+      console.log('Error fetching categories: ' + error);
+    }
+  });
+
+  const editModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+  editModal.show();
+}
+
+ 
+  // Handle Selling Price Calculation for Add Product
+  document.getElementById('buyingPriceInput').addEventListener('input', calculateSellingPrice);
+  document.getElementById('markupInput').addEventListener('input', calculateSellingPrice);
+
+  function calculateSellingPrice() {
+    var buyingPrice = parseFloat(document.getElementById('buyingPriceInput').value) || 0;
+    var markup = parseFloat(document.getElementById('markupInput').value) || 0;
+
+    var sellingPrice = buyingPrice + (buyingPrice * markup / 100);
+    document.getElementById('sellingPriceInput').value = sellingPrice.toFixed(2);
+  }
+
+  // Handle Selling Price Calculation for Edit Product
+  document.getElementById('editBuyingPrice').addEventListener('input', calculateEditSellingPrice);
+  document.getElementById('editMarkup').addEventListener('input', calculateEditSellingPrice);
+
+  function calculateEditSellingPrice() {
+    var buyingPrice = parseFloat(document.getElementById('editBuyingPrice').value) || 0;
+    var markup = parseFloat(document.getElementById('editMarkup').value) || 0;
+
+    var sellingPrice = buyingPrice + (buyingPrice * markup / 100);
+    document.getElementById('editSellingPrice').value = sellingPrice.toFixed(2);
+  }
+
+  document.getElementById("saveEditBtn").addEventListener("click", function () {
+    const id = document.getElementById("editId").value.trim();
+    const category = document.getElementById("editCategorySelect").value;
+    const code = document.getElementById("editCode").value.trim();
+    const description = document.getElementById("editDescription").value.trim();
+    const stock = document.getElementById("editStock").value.trim();
+    const buyingPrice = document.getElementById("editBuyingPrice").value.trim();
+    const markup = document.getElementById("editMarkup").value.trim();
+
+    // Validate the inputs
+    if (!category || !code || !description || !stock || !buyingPrice || !markup) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "edit_product.php", true); // Ensure this is the correct PHP file for editing
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    const params = new URLSearchParams({
+        id: id,
+        category: category,
+        code: code,
+        description: description,
+        stock: stock,
+        buying_price: buyingPrice,
+        markup: markup
+    });
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const response = xhr.responseText;
+            console.log(response); // Debugging server response
+            if (response === "success") {
+                location.reload(); // Refresh the page after successful update to reflect the changes
+            } else {
+                alert(response); // Show error message from the server
+            }
+        }
+    };
+
+    xhr.send(params.toString());
 });
 
-
-
-
-   </script>
- </body>                                                       
+  
+</script>
+</body>
 </html>

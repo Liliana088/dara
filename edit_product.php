@@ -2,11 +2,10 @@
 include 'db_conn.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate required fields
-
+    
     if (
         isset($_POST['id'], $_POST['code'], $_POST['category'], $_POST['description'],
-              $_POST['stock'], $_POST['buying_price'], $_POST['Selling_Price'])
+              $_POST['stock'], $_POST['buying_price'], $_POST['markup'])
     ) {
         $id = (int) $_POST['id'];
         $code = trim($_POST['code']);
@@ -14,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $description = trim($_POST['description']);
         $stock = (int) $_POST['stock'];
         $buyingPrice = (float) $_POST['buying_price'];
-        $sellingPrice = (float) $_POST['Selling_Price'];
+        $markup = (float) $_POST['markup'];
 
         // Check if product exists
         $checkQuery = "SELECT COUNT(*) FROM products WHERE id=?";
@@ -31,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Update product
-        $query = "UPDATE products SET Code=?, Category=?, Description=?, Stock=?, `Buying Price`=?, `Selling_Price`=? WHERE id=?";
+        $query = "UPDATE products SET Code=?, Category=?, Description=?, Stock=?, `cost`=?, `markup`=? WHERE id=?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("sssiddi", $code, $category, $description, $stock, $buyingPrice, $sellingPrice, $id);
+        $stmt->bind_param("sssiidi", $code, $category, $description, $stock, $buyingPrice, $markup, $id);
 
         if ($stmt->execute()) {
             echo "success";
