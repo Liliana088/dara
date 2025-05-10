@@ -24,7 +24,6 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 // Calculate the starting point (offset)
 $offset = ($page - 1) * $itemsPerPage;
 
-// Modify the SQL query to include LIMIT and OFFSET
 // Modify the SQL query to include LIMIT and OFFSET for pagination
 if (isset($_GET['lowstock']) && $_GET['lowstock'] == 1) {
   $sql = "SELECT products.*, categories.category AS category_name 
@@ -180,26 +179,28 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
             <?php } ?>
           </tbody>
         </table>
+
         <!-- Pagination Controls -->
-<div class="d-flex justify-content-center mt-4">
-    <ul class="pagination pagination-s my-custom-pagination">
-        <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
-        <a class="page-link" href="?page=<?php echo $page - 1; ?>&entries=<?php echo $itemsPerPage; ?><?php echo isset($_GET['lowstock']) ? '&lowstock=1' : ''; ?>">Previous</a>
-        </li>
-        
-        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-  <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-    <a class="page-link" href="?page=<?php echo $i; ?>&entries=<?php echo $itemsPerPage; ?><?php echo isset($_GET['lowstock']) ? '&lowstock=1' : ''; ?>"><?php echo $i; ?></a>
-  </li>
-<?php endfor; ?>
+        <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination pagination-s my-custom-pagination">
+                <!-- Previous Button -->
+                <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                    <a class="page-link" href="?page=<?php echo $page - 1; ?>&entries=<?php echo $itemsPerPage; ?><?php echo isset($_GET['lowstock']) ? '&lowstock=1' : ''; ?>">Previous</a>
+                </li>
+                
+                <!-- Page Numbers -->
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                    <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $i; ?>&entries=<?php echo $itemsPerPage; ?><?php echo isset($_GET['lowstock']) ? '&lowstock=1' : ''; ?>"><?php echo $i; ?></a>
+                    </li>
+                <?php endfor; ?>
 
-
-        <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
-            <a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a>
-        </li>
-    </ul>
-</div>
-
+                <!-- Next Button -->
+                <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                    <a class="page-link" href="?page=<?php echo $page + 1; ?>&entries=<?php echo $itemsPerPage; ?>">Next</a>
+                </li>
+            </ul>
+        </div>
       </div>
     </div>
   </div>

@@ -1,4 +1,5 @@
 <?php
+// Ensure the user is logged in and is not a guest.
 session_start();
 
 if (!isset($_SESSION['user_name'])) {
@@ -6,11 +7,34 @@ if (!isset($_SESSION['user_name'])) {
     exit();
 }
 
-// Block guest access
 if ($_SESSION['user_name'] === 'Guest') {
     header("Location: dashboard.php");
     exit();
 }
+
+// Include the database connection
+include 'db_conn.php';
+
+// Items per page (default to 7, override if set in query)
+$itemsPerPage = isset($_GET['entries']) ? max(1, (int)$_GET['entries']) : 7;
+
+// Get the current page, default to page 1
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Calculate the starting point (offset)
+$offset = ($page - 1) * $itemsPerPage;
+
+// Modify the SQL query to include LIMIT and OFFSET for pagination
+$sql = "SELECT * FROM categories LIMIT $itemsPerPage OFFSET $offset";
+
+// Execute the query to get the paginated categories
+$result = mysqli_query($conn, $sql);
+
+// Count the total number of rows in the categories table
+$countSql = "SELECT COUNT(*) as total FROM categories";
+$countResult = mysqli_query($conn, $countSql);
+$totalRows = mysqli_fetch_assoc($countResult)['total'];
+$totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
 ?>
 
 
@@ -24,217 +48,7 @@ if ($_SESSION['user_name'] === 'Guest') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
-
-    <style>
-      body {
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-      }
-
-      .navbar {
-        background-color: #393E75;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1100;
-        height: 56px;
-      }
-
-      .navbar .navbar-brand {
-        display: flex;
-        align-items: center;
-      }
-
-      .navbar-brand img.logo {
-        height: 40px;
-        margin-left: 10px;
-      }
-
-      .navbar-toggler {
-        font-size: 1.3rem;
-        margin-left: auto;
-      }
-
-      .sidebar {
-        position: fixed;
-        top: 56px;
-        left: 0;
-        height: calc(100vh - 56px);
-        width: 60px;
-        background-color: #5c47a1;
-        transition: width 0.3s ease;
-        overflow-x: hidden;
-        z-index: 1000;
-      }
-
-      .sidebar.expand {
-        width: 200px;
-      }
-
-      .sidebar .nav-link {
-        color: #fff;
-        display: flex;
-        align-items: center;
-        padding: 12px 15px;
-      }
-
-      .sidebar .nav-link i {
-        font-size: 1.2rem;
-        width: 24px;
-        text-align: center;
-      }
-
-      .sidebar .nav-link span {
-        display: none;
-        margin-left: 10px;
-        white-space: nowrap;
-      }
-
-      .sidebar.expand .nav-link span {
-        display: inline;
-      }
-
-      .main-content {
-        margin-left: 60px;
-        padding: 80px 20px 20px 20px;
-        transition: margin-left 0.3s ease;
-      }
-
-      .sidebar.expand ~ .main-content {
-        margin-left: 200px;
-      }
-
-      .card {
-        margin-top: 20px;
-      }
-
-      .category-table th,
-      .category-table td {
-        vertical-align: middle;
-      }
-
-      @media (max-width: 991px) {
-        .sidebar {
-          width: 0;
-        }
-
-        .sidebar.expand {
-          width: 200px;
-        }
-
-        .main-content {
-          margin-left: 0;
-        }
-
-        .sidebar.expand ~ .main-content {
-          margin-left: 200px;
-        }
-      }
-
-      /* icon buttons */
-      .icon-box {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-      }
-
-      .edit-icon {
-        background-color: #A9CCE9;
-      }
-
-      .delete-icon {
-        background-color: #AF0F0F;
-      }
-
-      /* modal styling from design */
-      .box {
-        width: 570px;
-        height: 318px;
-      }
-
-      .box .group {
-        position: relative;
-        width: 100%;
-        height: 100%;
-      }
-
-      .box .overlap {
-        position: relative;
-        width: 100%;
-        height: 100%;
-      }
-
-      .rectangle {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-color: #ffbbb5;
-      }
-
-      .div {
-        position: absolute;
-        width: 100%;
-        height: 61px;
-        background-color: #dc7a91;
-      }
-
-      .text-wrapper {
-        position: absolute;
-        top: 16px;
-        left: 18px;
-        font-family: "Inter", sans-serif;
-        color: #ffffff;
-        font-size: 24px;
-      }
-
-      .rectangle-2 {
-        position: absolute;
-        width: 100%;
-        height: 77px;
-        bottom: 0;
-        background-color: #ffbbb5;
-        border-top: 1px solid #b1b1b1;
-      }
-
-      .close-button .overlap-group {
-        background-color: #FE978E;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        text-align: center;
-        line-height: 45px;
-        font-size: 18px;
-        color:rgb(240, 233, 233);
-      }
-
-      .close-button {
-        position: absolute;
-        left: 18px;
-        bottom: 13px;
-        width: 84px;
-        height: 51px;
-      }
-
-      .fa-remove {
-        position: absolute;
-        top: 18px;
-        right: 18px;
-        font-size: 20px;
-        color: #ffffff;
-      }
-
-      .modal-dialog {
-        margin-top: 80px; /* adjustment of modal */
-      }
-
-    </style>
+    <link href="/dara/css/categories.css" rel="stylesheet" />
   </head>
   <body>
     <!-- Navbar -->
@@ -307,10 +121,7 @@ if ($_SESSION['user_name'] === 'Guest') {
             </thead>
             <tbody id="categoryTableBody">
               <?php
-                include "db_conn.php";
-                $sql = "SELECT * FROM categories";
-                $result = mysqli_query($conn, $sql);
-                $count = 1;
+                $count = $offset + 1;
                 while ($row = mysqli_fetch_assoc($result)) {
               ?>
                 <tr>
@@ -328,6 +139,27 @@ if ($_SESSION['user_name'] === 'Guest') {
               <?php } ?>
             </tbody>
           </table>
+
+          <!-- Pagination Controls -->
+          <div class="d-flex justify-content-center mt-4">
+              <ul class="pagination pagination-s my-custom-pagination">
+                  <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                      <a class="page-link" href="?page=<?php echo $page - 1; ?>&entries=<?php echo $itemsPerPage; ?>">Previous</a>
+                  </li>
+                  
+                  <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                  <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                      <a class="page-link" href="?page=<?php echo $i; ?>&entries=<?php echo $itemsPerPage; ?>"><?php echo $i; ?></a>
+                  </li>
+                  <?php endfor; ?>
+
+                  <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                      <a class="page-link" href="?page=<?php echo $page + 1; ?>&entries=<?php echo $itemsPerPage; ?>">Next</a>
+                  </li>
+              </ul>
+          </div>
+
+
         </div>
       </div>
     </div>
@@ -443,38 +275,47 @@ if ($_SESSION['user_name'] === 'Guest') {
       });
     </script>
     <script>
-function updateTable() {
-  const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-  let showCount = parseInt(document.getElementById("showEntries").value, 10) || 1;
+ // Filter and limit table rows
+ function updateTable() {
+    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+    let showCount = parseInt(document.getElementById("showEntries").value, 10) || 1;
 
-  if (showCount < 1) showCount = 1;
+    if (showCount < 1) showCount = 1;
 
-  const tableBody = document.getElementById("categoryTableBody"); // ← Correct ID
-  const rows = tableBody.querySelectorAll("tr");
+    const tableBody = document.getElementById("categoryTableBody"); // Correct ID
+    const rows = tableBody.querySelectorAll("tr");
 
-  let visibleCount = 0;
+    let visibleCount = 0;
 
-  rows.forEach(row => {
-    const cells = row.querySelectorAll("td");
-    const rowMatches = Array.from(cells).some(cell =>
-      cell.textContent.toLowerCase().includes(searchTerm)
-    );
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const rowMatches = Array.from(cells).some(cell =>
+        cell.textContent.toLowerCase().includes(searchTerm)
+        );
 
-    if (rowMatches && visibleCount < showCount) {
-      row.style.display = "";
-      visibleCount++;
-    } else {
-      row.style.display = "none";
+        if (rowMatches && visibleCount < showCount) {
+        row.style.display = "";
+        visibleCount++;
+        } else {
+        row.style.display = "none";
+        }
+    });
     }
-  });
-}
+
+    // Add event listeners for input elements
+    document.getElementById("searchInput").addEventListener("input", updateTable);
+    document.getElementById("showEntries").value = <?php echo $itemsPerPage; ?>;
+    document.getElementById("showEntries").addEventListener("change", function () {
+    const entries = this.value;
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("entries", entries);
+    urlParams.set("page", 1); // Reset to first page on entries change
+    window.location.search = urlParams.toString();
+});
 
 
-      document.getElementById("searchInput").addEventListener("input", updateTable);
-      document.getElementById("showEntries").addEventListener("input", updateTable);
-
-      // Initial load
-      window.addEventListener("DOMContentLoaded", updateTable);
+    // Initial load
+    window.addEventListener("DOMContentLoaded", updateTable);
 
 
     //will make the categories load on products
