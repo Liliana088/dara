@@ -15,8 +15,9 @@ if ($_SESSION['user_name'] === 'Guest') {
 }
 
 $lowStockThreshold = 5;
-// Items per page
-$itemsPerPage = 7;
+// Items per page (default to 7, override if set in query)
+$itemsPerPage = isset($_GET['entries']) ? max(1, (int)$_GET['entries']) : 7;
+
 // Get the current page, default to page 1
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
@@ -121,7 +122,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
 
       <div class="card-header bg-light d-flex justify-content-between align-items-center">
         <div>
-          Show <input type="number" id="showEntries" value="7" class="form-control d-inline-block w-auto" /> Entries
+          Show <input type="number" id="showEntries" value="10" class="form-control d-inline-block w-auto" /> Entries
         </div>
         <div>
           Search: <input type="text" id="searchInput" class="form-control d-inline-block w-auto" placeholder="Search" />
@@ -146,7 +147,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
           </thead>
           <tbody id="productTableBody">
             <?php
-              $count = 1;
+              $count = $offset + 1;
               while ($row = mysqli_fetch_assoc($result)) {
 
                 $stock = (int)$row['Stock'];
@@ -183,14 +184,15 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
 <div class="pagination">
     <ul class="pagination">
         <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
-            <a class="page-link" href="?page=<?php echo $page - 1; ?>">Previous</a>
+        <a class="page-link" href="?page=<?php echo $page - 1; ?>&entries=<?php echo $itemsPerPage; ?><?php echo isset($_GET['lowstock']) ? '&lowstock=1' : ''; ?>">Previous</a>
         </li>
         
         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-            <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
-                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
-            </li>
-        <?php endfor; ?>
+  <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+    <a class="page-link" href="?page=<?php echo $i; ?>&entries=<?php echo $itemsPerPage; ?><?php echo isset($_GET['lowstock']) ? '&lowstock=1' : ''; ?>"><?php echo $i; ?></a>
+  </li>
+<?php endfor; ?>
+
 
         <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
             <a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a>
@@ -329,7 +331,14 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
 
     // Add event listeners for input elements
     document.getElementById("searchInput").addEventListener("input", updateTable);
-    document.getElementById("showEntries").addEventListener("input", updateTable);
+    document.getElementById("showEntries").value = <?php echo $itemsPerPage; ?>;
+    document.getElementById("showEntries").addEventListener("change", function () {
+    const entries = this.value;
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("entries", entries);
+    urlParams.set("page", 1); // Reset to first page on entries change
+    window.location.search = urlParams.toString();
+});
 
     // Initial load
     window.addEventListener("DOMContentLoaded", updateTable);
