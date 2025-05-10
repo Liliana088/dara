@@ -15,20 +15,38 @@ if ($_SESSION['user_name'] === 'Guest') {
 }
 
 $lowStockThreshold = 5;
+// Items per page
+$itemsPerPage = 7;
+// Get the current page, default to page 1
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
+// Calculate the starting point (offset)
+$offset = ($page - 1) * $itemsPerPage;
+
+// Modify the SQL query to include LIMIT and OFFSET
+// Modify the SQL query to include LIMIT and OFFSET for pagination
 if (isset($_GET['lowstock']) && $_GET['lowstock'] == 1) {
   $sql = "SELECT products.*, categories.category AS category_name 
-  FROM products 
-  LEFT JOIN categories ON products.Category = categories.id 
-  WHERE Stock <= $lowStockThreshold";
-
+          FROM products 
+          LEFT JOIN categories ON products.Category = categories.id 
+          WHERE Stock <= $lowStockThreshold
+          LIMIT $itemsPerPage OFFSET $offset";
 } else {
-    $sql = "SELECT products.*, categories.category AS category_name 
-    FROM products 
-    LEFT JOIN categories ON products.Category = categories.id";
+  $sql = "SELECT products.*, categories.category AS category_name 
+          FROM products 
+          LEFT JOIN categories ON products.Category = categories.id
+          LIMIT $itemsPerPage OFFSET $offset";
 }
 
+
 $result = mysqli_query($conn, $sql);
+
+// Count the total number of rows in the table
+$countSql = "SELECT COUNT(*) as total FROM products";
+$countResult = mysqli_query($conn, $countSql);
+$totalRows = mysqli_fetch_assoc($countResult)['total'];
+$totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
+
 
 ?>
 
@@ -161,6 +179,25 @@ $result = mysqli_query($conn, $sql);
             <?php } ?>
           </tbody>
         </table>
+        <!-- Pagination Controls -->
+<div class="pagination">
+    <ul class="pagination">
+        <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=<?php echo $page - 1; ?>">Previous</a>
+        </li>
+        
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            </li>
+        <?php endfor; ?>
+
+        <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a>
+        </li>
+    </ul>
+</div>
+
       </div>
     </div>
   </div>
