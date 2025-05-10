@@ -115,8 +115,8 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
 
   <!-- Right sid  e (View Low Stock Only & View All) -->
   <div class="mb-1 mt-2 me-2">
-    <a href="products.php?lowstock=1" class="btn btn-warning me-1">View Low Stock Only</a>
-    <a href="products.php" class="btn btn-secondary">View All</a>
+    <a href="products.php?lowstock=1" class="btn custom-lowstock-btn me-1">View Low Stock Only</a>
+    <a href="products.php" class="btn custom-viewall-btn">View All</a>
   </div>
 </div>
 
@@ -181,8 +181,8 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
           </tbody>
         </table>
         <!-- Pagination Controls -->
-<div class="pagination">
-    <ul class="pagination">
+<div class="d-flex justify-content-center mt-4">
+    <ul class="pagination pagination-s my-custom-pagination">
         <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
         <a class="page-link" href="?page=<?php echo $page - 1; ?>&entries=<?php echo $itemsPerPage; ?><?php echo isset($_GET['lowstock']) ? '&lowstock=1' : ''; ?>">Previous</a>
         </li>
