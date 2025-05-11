@@ -47,7 +47,6 @@ $countResult = mysqli_query($conn, $countSql);
 $totalRows = mysqli_fetch_assoc($countResult)['total'];
 $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
 
-
 ?>
 
 <!DOCTYPE html>
@@ -140,6 +139,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
               <th scope="col">Stock</th>
               <th scope="col">Cost</th>
               <th scope="col">Markup %</th>
+              <th scope="col">Markup Amount</th>
               <th scope="col">Date Added</th>
               <th scope="col">Action</th>
             </tr>
@@ -163,9 +163,23 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                     <span class="badge bg-danger">Low</span>
                   <?php endif; ?>
                 </td>
-                <td><?php echo htmlspecialchars($row['cost']); ?></td>
-                <td><?php echo htmlspecialchars($row['markup']). '%'; ?></td>
-                <td><?php echo htmlspecialchars($row['Date Added']); ?></td>
+                <td>
+                    <?php 
+                      $cost = (float)$row['cost'];
+                      echo '₱' . number_format(round($cost), 2); 
+                    ?>
+                  </td>
+                  <td><?php echo htmlspecialchars($row['markup']). '%'; ?></td>
+                  <td>
+                    <?php 
+                      $cost = (float)$row['cost'];
+                      $markup = (float)$row['markup'];
+                      $sellingPrice = $cost + ($cost * $markup / 100);
+                      echo '₱' . number_format(round($sellingPrice), 2);
+                    ?>
+                  </td>
+
+                  <td><?php echo htmlspecialchars($row['Date Added']); ?></td>
                 <td>
                   <a href="#" class="icon-box edit-icon" data-bs-toggle="modal" data-bs-target="#editProductModal" onclick="populateEditModal('<?php echo $row['id']; ?>', '<?php echo htmlspecialchars($row['Code']); ?>', '<?php echo htmlspecialchars($row['Description']); ?>', '<?php echo htmlspecialchars($row['Stock']); ?>', '<?php echo htmlspecialchars($row['cost']); ?>', '<?php echo htmlspecialchars($row['markup']); ?>', '<?php echo $row['Category']; ?>')"
                   >
@@ -236,7 +250,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
             <input type="number" step="0.01" class="form-control" name="markup" id="markupInput" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Selling Price</label>
+            <label class="form-label">Markup Amount</label>
             <input type="number" step="0.01" class="form-control" name="selling_price" id="sellingPriceInput" readonly>
           </div>
           <div class="mb-3">
@@ -284,7 +298,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
             <input type="number" step="0.01" class="form-control" name="markup" id="editMarkup" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Selling Price</label>
+            <label class="form-label">Markup Amount</label>
             <input type="number" step="0.01" class="form-control" name="selling_price" id="editSellingPrice" readonly>
           </div>
           <div class="mb-3">
