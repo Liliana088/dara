@@ -111,7 +111,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
     <i class="bi bi-plus-lg"></i> Add Product    
   </button>
 
-  <!-- Right sid  e (View Low Stock Only & View All) -->
+  <!-- Right side (View Low Stock Only & View All) -->
   <div class="mb-1 mt-2 me-2">
     <a href="products.php?lowstock=1" class="btn custom-lowstock-btn me-1">View Low Stock Only</a>
     <a href="products.php" class="btn custom-viewall-btn">View All</a>
@@ -279,7 +279,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
           <input type="hidden" name="id" id="editId">
           <div class="mb-3">
             <label class="form-label">Product Code</label>
-            <input type="text" class="form-control" name="code" id="editCode" readonly required>
+            <input type="text" class="form-control" name="code" id="editCode" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Description</label>

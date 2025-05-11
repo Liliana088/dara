@@ -118,8 +118,8 @@
         border-radius: 4px;
       }
 
-      .edit-icon {
-        background-color: #A9CCE9;
+      .print-icon {
+        background-color: #393E75;
       }
 
       .delete-icon {
@@ -204,4 +204,20 @@
 
       .modal-dialog {
         margin-top: 80px; /* adjustment of modal */
+      }
+      
+      .my-custom-pagination .page-link {
+        background-color: #DC7A91 !important; /* Blue background */
+        color: white !important;              /* White text */
+        border-color: #B5698E!important;
+      }
+      
+      .my-custom-pagination .page-item.active .page-link {
+        background-color: #8E588A !important; /* Darker blue for active */
+        border-color: #644B80 !important;
+      }
+      
+      .my-custom-pagination .page-link:hover {
+        background-color: #B5698E!important;
+        color: white !important;
       }
