@@ -1,0 +1,114 @@
+body {
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
+
+  .navbar {
+    background-color: #393E75;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+    height: 56px;
+  }
+
+  .navbar .navbar-brand {
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-brand img.logo {
+    height: 40px;
+    margin-left: 10px;
+  }
+
+  .navbar-toggler {
+    font-size: 1.3rem;
+    margin-left: auto;  /* Align the toggler to the right */
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    height: calc(100vh - 56px);
+    width: 60px;
+    background-color: #5c47a1;
+    transition: width 0.3s ease;
+    overflow-x: hidden;
+    z-index: 1000;
+  }
+
+  .sidebar.expand {
+    width: 200px;
+  }
+
+  .sidebar .nav-link {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+  }
+
+  .sidebar .nav-link i {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+  }
+
+  .sidebar .nav-link span {
+    display: none;
+    margin-left: 10px;
+    white-space: nowrap;
+  }
+
+  .sidebar.expand .nav-link span {
+    display: inline;
+  }
+
+  .main-content {
+    margin-left: 60px;
+    padding: 80px 20px 20px 20px;
+    transition: margin-left 0.3s ease;
+  }
+
+  .sidebar.expand ~ .main-content {
+    margin-left: 200px;
+  }
+
+  .sales-graph {
+    background-color: #f8c8c8;
+    padding: 1rem;
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+  }
+
+  .section-header {
+    font-weight: bold;
+    color: #5c47a1;
+    margin-bottom: 1rem;
+  }
+
+  .card-footer {
+    background-color:666B9E
+  }
+
+  @media (max-width: 991px) {
+    .sidebar {
+      width: 0;
+    }
+
+    .sidebar.expand {
+      width: 200px;
+    }
+
+    .main-content {
+      margin-left: 0;
+    }
+
+    .sidebar.expand ~ .main-content {
+      margin-left: 200px;
+    }
+  }

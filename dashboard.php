@@ -7,6 +7,12 @@ if (!isset($_SESSION['user_name'])) {
 
 include "db_conn.php"; //connect to database
 
+// Count number of categories
+$categoryQuery = "SELECT COUNT(*) as category_count FROM categories";
+$categoryResult = mysqli_query($conn, $categoryQuery);
+$categoryData = mysqli_fetch_assoc($categoryResult);
+$categoryCount = $categoryData['category_count'];
+
 //for the low stock
 $lowStockThreshold = 5;
 $lowStockQuery = "SELECT COUNT(*) as low_count FROM products WHERE Stock <= $lowStockThreshold";
@@ -130,7 +136,7 @@ if (!isset($_SESSION['shown_low_stock_popup'])) {
   <div class="col-md-4">
     <div class="card text-white position-relative" style="background-color: #3F417D;">
       <div class="card-body">
-        <div style="font-size: 1.5rem; font-weight: bold;">7</div>
+        <div style="font-size: 1.5rem; font-weight: bold;"><?php echo $categoryCount; ?></div>
         <div>Categories</div>
       </div>
       <div class="card-footer border-0">
