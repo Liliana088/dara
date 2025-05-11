@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
       $stmt->close();
 
       $subtotal += $cost * $quantity;
-      $markup_amount = $cost * ($markup / 100);
+      $markup_amount = ceil ($cost * ($markup / 100));
       $total_markup += ($markup / 100) * $cost * $quantity;
       $price_at_sale_list[] = $cost + ($markup / 100 * $cost);
       
@@ -153,38 +153,79 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
         </div>
         <table class="table table-striped">
             <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Seller</th>
-                    <th>Payment Method</th>
-                    <th>Subtotal</th>
-                    <th>Markup</th>
-                    <th>Total Cost</th>
-                    <th>Date</th>
-                </tr>
+            <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Seller</th>
+                  <th>Payment Method</th>
+                  <th>Subtotal</th>
+                  <th>Markup</th>
+                  <th>Total Cost</th>
+                  <th>Date</th>
+                  <th>Items</th>
+                  <th>Actions</th>
+              </tr>
             </thead>
             <tbody>
-                <?php
-                $sql = "SELECT * FROM sales ORDER BY date DESC";
-                $result = $conn->query($sql);
+    <?php
+    // Fetch all sales records first
+    $sql = "SELECT * FROM sales ORDER BY date DESC";
+    $result = $conn->query($sql);
 
-                if ($result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()) {
-                        echo "<tr>
-                                <td>{$row['id']}</td>
-                                <td>{$row['seller']}</td>
-                                <td>{$row['payment_method']}</td>
-                                <td>{$row['subtotal']}</td>
-                                <td>{$row['markup']}</td>
-                                <td>{$row['total_cost']}</td>
-                                <td>{$row['date']}</td>
-                              </tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='7'>No sales records found.</td></tr>";
-                }
-                ?>
-            </tbody>
+    if ($result->num_rows > 0) {
+        // Loop through each sale
+        while($row = $result->fetch_assoc()) {
+            $sale_id = $row['id'];
+
+            // Fetch items for this sale
+            $itemsStmt = $conn->prepare("
+                SELECT p.Description AS product_name, si.quantity
+                FROM sales_items si
+                JOIN products p ON p.id = si.product_id
+                WHERE si.sale_id = ?
+            ");
+            $itemsStmt->bind_param("i", $sale_id);
+            $itemsStmt->execute();
+            $itemsResult = $itemsStmt->get_result();
+
+            // Store all item names and quantities
+            $items = [];
+            while ($itemRow = $itemsResult->fetch_assoc()) {
+                $items[] = $itemRow['product_name'] . " (" . $itemRow['quantity'] . ")";
+            }
+
+            // Combine the items into a string
+            $row['items'] = implode("<br>", $items);
+            
+            // Format subtotal, markup, and total cost to two decimal places
+            $formatted_subtotal = number_format(ceil($row['subtotal']), 2);
+            $formatted_markup = number_format(ceil($row['markup']), 2);
+            $formatted_total_cost = number_format(ceil($row['total_cost']), 2);            
+
+            // Display the sale information in the table row
+            echo "<tr>
+                    <td>{$row['id']}</td>
+                    <td>{$row['seller']}</td>
+                    <td>{$row['payment_method']}</td>
+                    <td>₱{$formatted_subtotal}</td>
+                    <td>₱{$formatted_markup}</td>
+                    <td>₱{$formatted_total_cost}</td>
+                    <td>{$row['date']}</td>
+                    <td>{$row['items']}</td>
+                    <td>
+                        <!-- You can add buttons here for actions like print, delete -->
+                        <button class='btn btn-primary'>Print</button>
+                        <button class='btn btn-danger'>Delete</button>
+                    </td>
+                  </tr>";
+        }
+    } else {
+        // If no sales records exist, show this message
+        echo "<tr><td colspan='8'>No sales records found.</td></tr>";
+    }
+    ?>
+</tbody>
+
         </table>
     </div>
 
@@ -256,7 +297,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
         <input type="hidden" name="subtotal" id="subtotalInput">
         <input type="hidden" name="markup" id="markupInput">
         <input type="hidden" name="payment_method" value="Cash">
-        <input type="hidden" name="date" value="<?php echo date('Y-m-d'); ?>">
+        <input type="hidden" name="date" value="<?php echo date('Y-m-d H:i:s'); ?>">
         <button type="submit" class="btn" style="background-color: #dc7a91; color: white; width: 100%;">Save Sale</button>
         </form>
     </div>
