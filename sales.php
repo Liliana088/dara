@@ -189,55 +189,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
     </div>
 
     <!-- Add Sale Sidebar (Offcanvas) -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="addSaleSidebar" aria-labelledby="addSaleSidebarLabel">
-    <div class="offcanvas-header" style="background-color: #dc7a91;">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="addSaleSidebar" aria-labelledby="addSaleSidebarLabel" style="width: 600px">
+    
+    <div class="offcanvas-header mt-5" style="background-color: #dc7a91;">
         <h5 class="offcanvas-title text-white" id="addSaleSidebarLabel">Add Sale</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
+
     <div class="offcanvas-body" style="background-color: #ffbbb5;">
         <form method="POST" action="">
-        <div class="mb-3">
+        <div class="mb-2">
             <label class="form-label">Seller</label>
             <input type="text" name="seller" class="form-control" value="<?php echo $_SESSION['user_name']; ?>" readonly />
         </div>
-
         <!-- Products Container -->
         <div id="productContainer">
-        <div class="mb-3 d-flex align-items-center gap-2 product-row">
-        <select class="form-select product-select" name="product_id[]" onchange="updatePrice(this)">
-          <?php foreach($products as $product): ?>
-            <option value="<?= $product['id']; ?>" 
-                    data-cost="<?= $product['cost']; ?>" 
-                    data-markup="<?= $product['markup']; ?>">
-              <?= htmlspecialchars($product['Description']); ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
-            <input type="number" class="form-control quantity" name="quantity[]" value="1" min="1" style="width: 70px;">
+          <div class="mb-2 d-flex align-items-center product-row">
+            <div class="input-group me-2" style="width: 1300px;">
+              <button type="button" class="btn btn-outline-danger delete-row-btn">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+              <select class="form-select product-select" name="product_id[]" onchange="updatePrice(this)">
+                <?php foreach($products as $product): ?>
+                  <option value="<?= $product['id']; ?>" 
+                          data-cost="<?= $product['cost']; ?>" 
+                          data-markup="<?= $product['markup']; ?>">
+                    <?= htmlspecialchars($product['Description']); ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <input type="number" class="form-control quantity" name="quantity[]" value="1" min="1" style="width: 60px;">
             <span>₱</span>
             <input type="text" name="product_price[]" class="form-control price-field" readonly>
-
-        </div>
+          </div>
         </div>
 
         <!-- Add Product Button -->
-        <div class="mb-3">
+        <div class="mb-2">
         <button type="button" class="btn btn-light" id="addProductBtn" style="background-color: #dc7a91; color: white;">+ Add Product</button>
         </div>
-
-
         <!-- Subtotal -->
-        <div class="mb-3">
+        <div class="mb-2">
           <label class="form-label">Subtotal</label>
           <input type="text" id="subtotalDisplay" class="form-control" readonly>
         </div>
 
         <!-- Total (Subtotal + Markup) -->
-        <div class="mb-3">
-          <label class="form-label">Total Cost</label>
+        <div class="mb-2">
+          <label class="form-label fw-bold">Total Cost</label>
           <input type="text" id="totalCost" name="total_cost" class="form-control" readonly />
         </div>
-
 
         <!-- Cash Section -->
         <div class="row mb-3">
@@ -246,17 +248,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
             <input type="number" id="cashReceived" name="received" class="form-control">
         </div>
         <div class="col">
-            <label class="form-label">Change</label>
+            <label class="form-label fw-bold">Change</label>
             <input type="text" id="changeDue" name="change" class="form-control" readonly>
         </div>
         </div>
 
         <input type="hidden" name="subtotal" id="subtotalInput">
         <input type="hidden" name="markup" id="markupInput">
-
         <input type="hidden" name="payment_method" value="Cash">
         <input type="hidden" name="date" value="<?php echo date('Y-m-d'); ?>">
-
         <button type="submit" class="btn" style="background-color: #dc7a91; color: white; width: 100%;">Save Sale</button>
         </form>
     </div>
@@ -269,5 +269,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
     </script>
     <!-- Link to external JS -->
     <script src="/dara/js/sales.js" defer></script>
+
 </body>
 </html>
