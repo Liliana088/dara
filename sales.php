@@ -79,6 +79,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
   }
 }
 
+// Items per page (default to 7, override if set in query)
+$itemsPerPage = isset($_GET['entries']) ? max(1, (int)$_GET['entries']) : 7;
+
+// Get the current page, default to page 1
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Calculate the starting point (offset)
+$offset = ($page - 1) * $itemsPerPage;
+
+// Modify the SQL query to include LIMIT and OFFSET for pagination
+$sql = "SELECT sales.id, users.name AS seller_name, sales.payment_method, sales.subtotal, sales.markup, sales.total_cost, sales.date,
+               GROUP_CONCAT(DISTINCT products.description  ORDER BY products.description ASC) AS product_names
+        FROM sales
+        LEFT JOIN sales_items ON sales.id = sales_items.sale_id
+        LEFT JOIN products ON sales_items.product_id = products.id
+        LEFT JOIN users ON sales.seller = users.id
+        GROUP BY sales.id
+        LIMIT $itemsPerPage OFFSET $offset";
+
+
+// Execute the query to get the paginated sales data
+$result = mysqli_query($conn, $sql);
+
+// Count the total number of rows in the sales table
+$countSql = "SELECT COUNT(DISTINCT sales.id) as total FROM sales";
+$countResult = mysqli_query($conn, $countSql);
+$totalRows = mysqli_fetch_assoc($countResult)['total'];
+$totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
+
 ?>
 
 <!DOCTYPE html>
@@ -166,7 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
                   <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody name="salesTablebody" id="salesTableBody">
     <?php
     // Fetch all sales records first
     $sql = "SELECT * FROM sales ORDER BY date DESC";
@@ -303,6 +332,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
     </div>
     </div>
 
+    <!-- Pagination Controls -->
+    <div class="d-flex justify-content-center mt-4">
+              <ul class="pagination pagination-s my-custom-pagination">
+                  <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                      <a class="page-link" href="?page=<?php echo $page - 1; ?>&entries=<?php echo $itemsPerPage; ?>">Previous</a>
+                  </li>
+                  
+                  <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                  <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                      <a class="page-link" href="?page=<?php echo $i; ?>&entries=<?php echo $itemsPerPage; ?>"><?php echo $i; ?></a>
+                  </li>
+                  <?php endfor; ?>
+
+                  <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                      <a class="page-link" href="?page=<?php echo $page + 1; ?>&entries=<?php echo $itemsPerPage; ?>">Next</a>
+                  </li>
+              </ul>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Inject product options as JSON -->
     <script id="product-data" type="application/json">
@@ -310,6 +362,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
     </script>
     <!-- Link to external JS -->
     <script src="/dara/js/sales.js" defer></script>
+    <script>
+    document.getElementById("showEntries").value = <?php echo $itemsPerPage; ?>;
+    </script>
 
 </body>
 </html>

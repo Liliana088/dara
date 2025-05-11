@@ -7,28 +7,54 @@ function toggleSidebar() {
 // Filter and limit table rows
 function updateTable() {
   const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-  let showCount = parseInt(document.getElementById("showEntries").value, 10) || 1;
-  if (showCount < 1) showCount = 1;
+  const showCount = parseInt(document.getElementById("showEntries").value, 10) || 1;
 
-  const tableBody = document.querySelector("table tbody");
-  const rows = tableBody.querySelectorAll("tr");
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentPage = parseInt(urlParams.get("page")) || 1;
 
-  let visibleCount = 0;
+  const tableBody = document.querySelector("#salesTableBody");
+  const rows = Array.from(tableBody.querySelectorAll("tr"));
 
-  rows.forEach(row => {
+  // Filter rows that match the search term
+  const filteredRows = rows.filter(row => {
     const cells = row.querySelectorAll("td");
-    const rowMatches = Array.from(cells).some(cell =>
+    return Array.from(cells).some(cell =>
       cell.textContent.toLowerCase().includes(searchTerm)
     );
+  });
 
-    if (rowMatches && visibleCount < showCount) {
+  // Calculate start and end indexes based on page number
+  const startIndex = (currentPage - 1) * showCount;
+  const endIndex = startIndex + showCount;
+
+  filteredRows.forEach((row, index) => {
+    if (index >= startIndex && index < endIndex) {
       row.style.display = "";
-      visibleCount++;
     } else {
       row.style.display = "none";
     }
   });
+
+  // Hide rows that don't match the filter
+  rows.forEach(row => {
+    if (!filteredRows.includes(row)) {
+      row.style.display = "none";
+    }
+  });
 }
+
+    // Add event listeners for input elements
+    document.getElementById("searchInput").addEventListener("input", updateTable);
+    document.getElementById("showEntries").addEventListener("change", function () {
+    const entries = this.value;
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("entries", entries);
+    urlParams.set("page", 1); // Reset to first page on entries change
+    window.location.search = urlParams.toString();
+});
+
+    // Initial load
+    window.addEventListener("DOMContentLoaded", updateTable);
 
 function updatePrice(selectElement) {
   const selectedOption = selectElement.options[selectElement.selectedIndex];
