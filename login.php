@@ -1,30 +1,12 @@
 <?php
 session_start(); // Start session first
 
-// Database connection
-$servername = "localhost";
-$db_username = "root";
-$db_password = ""; // change if needed
-$dbname = "dara";
-
-$conn = new mysqli($servername, $db_username, $db_password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include "db_conn.php";
 
 $error = "";
 $success = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Guest login
-  if (isset($_POST['guest_login'])) {
-      $_SESSION['user_id'] = 0;
-      $_SESSION['user_name'] = 'Guest';
-      header("Location: dashboard.php");
-      exit();
-  }
 
   // Normal login
   $username = trim($_POST['username'] ?? '');
@@ -63,106 +45,73 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Login Form</title>
+  <head>
+    <meta charset="UTF-8">
+    <title>Login Form</title>
 
-  <!-- Bootstrap 5 CSS -->
-  <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
 
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="icon" type="image/x-icon" href="img/daraa.ico">
-  <style>
-    body {
-      height: 100vh;
-      background: linear-gradient(to bottom right, #644b80, #ed8990);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-    }
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="img/daraa.ico">
+    <link rel="stylesheet" href="/dara/css/login.css">
+  </head>
 
-    .login-container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(5px);
-      padding: 40px 30px;
-      width: 100%;
-      max-width: 500px;
-      text-align: center;
-      border-radius: 10px;
-      color: white;
-    }
+  <body>
+    <div class="login-container">
+        <img src="img/dara.png" alt="Logo" class="top-image">
 
-    .top-image {
-      width: 150px;
-      height: auto;
-      margin-bottom: 30px;
-    }
-
-    .form-control::placeholder {
-      color: #bbb;
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="login-container">
-    <img src="img/dara.png" alt="Logo" class="top-image">
-
-    <form method="post" action="" class="needs-validation" novalidate>
-      <div class="mb-1 text-start">   
-        <div class="input-group has-validation">
-          <span class="input-group-text "><i class="fa fa-user"></i></span>
-          <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
-          <div class="invalid-feedback">
-            Please enter your username.
+        <form method="post" action="" class="needs-validation" novalidate>
+          <div class="mb-1 text-start">   
+            <div class="input-group has-validation">
+              <span class="input-group-text "><i class="fa fa-user"></i></span>
+              <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+              <div class="invalid-feedback">
+                Please enter your username.
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div class="mb-3 text-start">      
-        <div class="input-group has-validation">
-          <span class="input-group-text"><i class="fa fa-lock"></i></span>
-          <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
-          <div class="invalid-feedback">
-            Please enter your password.
+          <div class="mb-3 text-start">      
+            <div class="input-group has-validation">
+              <span class="input-group-text"><i class="fa fa-lock"></i></span>
+              <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
+              <div class="invalid-feedback">
+                Please enter your password.
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <button type="submit" class="btn btn-outline-light w-100 mb-1">Login</button>
-      <button type="submit" name="guest_login" class="btn btn-outline-secondary w-100">Login as Guest</button>
-    </form>
+          <button type="submit" class="btn btn-outline-light w-100 mb-1">Login</button>
+        </form>
 
-    <!-- PHP message output -->
-    <?php if (!empty($error)): ?>
-      <div class="alert alert-warning mt-3"><?php echo $error; ?></div>
-    <?php elseif (!empty($success)): ?>
-      <div class="alert alert-success mt-3"><?php echo $success; ?></div>
-    <?php endif; ?>
-</div>
+        <!-- PHP message output -->
+        <?php if (!empty($error)): ?>
+          <div class="alert alert-warning mt-3"><?php echo $error; ?></div>
+        <?php elseif (!empty($success)): ?>
+          <div class="alert alert-success mt-3"><?php echo $success; ?></div>
+        <?php endif; ?>
+    </div>
 
-<!-- Bootstrap 5 JavaScript for validation -->
-<script src="bootstrap-offline/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 5 JavaScript for validation -->
+    <script src="bootstrap-offline/js/bootstrap.bundle.min.js"></script>
 
-<script>
-// Bootstrap 5 custom validation with guest login bypass
-(() => {
-  'use strict';
-  const forms = document.querySelectorAll('.needs-validation');
-  Array.from(forms).forEach(form => {
-    form.addEventListener('submit', event => {
-      const isGuestLogin = event.submitter && event.submitter.name === 'guest_login';
-      if (!isGuestLogin && !form.checkValidity()) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      form.classList.add('was-validated');
-    }, false);
-  });
-})();
-</script>
+    <script>
+    (() => {
+      'use strict';
+      const forms = document.querySelectorAll('.needs-validation');
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    })();
+    </script>
 
-</body>
+
+  </body>
 </html>

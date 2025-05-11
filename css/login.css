@@ -1,0 +1,29 @@
+    body {
+      height: 100vh;
+      background: linear-gradient(to bottom right, #644b80, #ed8990);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      border-radius: 10px;
+      color: white;
+    }
+
+    .top-image {
+      width: 150px;
+      height: auto;
+      margin-bottom: 30px;
+    }
+
+    .form-control::placeholder {
+      color: #bbb;
+    }
