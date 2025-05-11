@@ -31,7 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
   $date = $_POST['date'];
   $product_ids = $_POST['product_id'];
   $quantities = $_POST['quantity'];
-  $cash_received = floatval($_POST['cash_received'] ?? 0);
+  $cash_received = floatval($_POST['received'] ?? 0);
+  $change_given = isset($_POST['change']) ? floatval($_POST['change']) : 0;
 
   $subtotal = 0;
   $total_markup = 0;
@@ -59,10 +60,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
 
   $total_cost = $subtotal + $total_markup;
   $change = $cash_received - $total_cost;
-
   // Insert into sales table
-  $stmt = $conn->prepare("INSERT INTO sales (seller, payment_method, subtotal, markup, total_cost, date) VALUES (?, ?, ?, ?, ?, ?)");
-  $stmt->bind_param("ssddds", $seller, $payment_method, $subtotal, $total_markup, $total_cost, $date);
+  $stmt = $conn->prepare("INSERT INTO sales (seller, payment_method, subtotal, markup, total_cost, date,cash_received, change_given) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+  $stmt->bind_param("ssdddsdd", $seller, $payment_method, $subtotal, $total_markup, $total_cost, $date, $cash_received, $change_given);
   $stmt->execute();
   $sale_id = $stmt->insert_id;
   $stmt->close();
@@ -233,27 +233,33 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
 
             // Display the sale information in the table row
             echo "<tr>
-                    <td>{$row['id']}</td>
-                    <td>{$row['seller']}</td>
-                    <td>{$row['payment_method']}</td>
-                    <td>₱{$formatted_subtotal}</td>
-                    <td>₱{$formatted_markup}</td>
-                    <td>₱{$formatted_total_cost}</td>
-                    <td>{$row['date']}</td>
-                    <td>{$row['items']}</td>
-                    <td>
-                        <!-- You can add buttons here for actions like print, delete -->
-                        <button class='btn btn-primary'>Print</button>
-                        <button class='btn btn-danger'>Delete</button>
-                    </td>
-                  </tr>";
+            <td>{$row['id']}</td>
+            <td>{$row['seller']}</td>
+            <td>{$row['payment_method']}</td>
+            <td>₱{$formatted_subtotal}</td>
+            <td>₱{$formatted_markup}</td>
+            <td>₱{$formatted_total_cost}</td>
+            <td>{$row['date']}</td>
+            <td>{$row['items']}</td>
+            <td>
+                <a href='receipt.php?id={$row['id']}' target='_blank' class='icon-box print-icon' onclick='printReceipt({$row['id']})'>
+                    <i class='bi bi-printer-fill'></i>
+                </a>
+                <a href='delete_sales.php?id={$row['id']}' class='icon-box delete-icon'
+                   onclick='return confirm(\"Are you sure you want to delete this sale?\");'>
+                    <i class='fa-solid fa-trash'></i>
+                </a>
+            </td>
+        </tr>";
+        
+ 
         }
     } else {
         // If no sales records exist, show this message
         echo "<tr><td colspan='8'>No sales records found.</td></tr>";
     }
     ?>
-</tbody>
+  </tbody>
 
         </table>
     </div>
@@ -315,7 +321,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
         <div class="row mb-3">
         <div class="col">
             <label class="form-label">Cash Received</label>
-            <input type="number" id="cashReceived" name="received" class="form-control">
+            <input type="number" id="cashReceived" name="received" class="form-control" required>
         </div>
         <div class="col">
             <label class="form-label fw-bold">Change</label>
@@ -350,8 +356,6 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                   </li>
               </ul>
           </div>
-
-
         </div>
       </div>
     </div>
