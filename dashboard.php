@@ -32,6 +32,25 @@ if (!isset($_SESSION['shown_low_stock_popup'])) {
 
   $_SESSION['shown_low_stock_popup'] = true;
 }
+
+$startOfWeek = date('Y-m-d', strtotime('monday this week'));
+$endOfWeek = date('Y-m-d', strtotime('sunday this week'));
+
+$weeklySalesQuery = "SELECT DATE(date) AS sale_date, SUM(total_cost) AS total_sales
+                     FROM sales
+                     WHERE DATE(date) BETWEEN '$startOfWeek' AND '$endOfWeek'
+                     GROUP BY DATE(date)
+                     ORDER BY sale_date ASC";
+
+$weeklyResult = mysqli_query($conn, $weeklySalesQuery);
+
+$weeklyDates = [];
+$weeklyTotals = [];
+
+while ($row = mysqli_fetch_assoc($weeklyResult)) {
+    $weeklyDates[] = $row['sale_date'];
+    $weeklyTotals[] = $row['total_sales'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -163,8 +182,8 @@ if (!isset($_SESSION['shown_low_stock_popup'])) {
 </div>
 
     <div class="sales-graph mt-4">
-      <h4 class="text-center">SALES GRAPH</h4>
-      <canvas id="salesChart" height="100"></canvas>
+      <h4 class="text-center">SALES THIS WEEK</h4>
+      <canvas id="weeklySalesChart" height="100"></canvas>
     </div>
   </div>
 
@@ -196,31 +215,27 @@ if (!isset($_SESSION['shown_low_stock_popup'])) {
       sidebar.classList.toggle("expand");
     }
 
-    const ctx = document.getElementById('salesChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+    const weeklySalesChart = new Chart(document.getElementById('weeklySalesChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+        labels: <?php echo json_encode($weeklyDates); ?>,
         datasets: [{
-          label: 'Sales',
-          data: [3700, 3100, 1900, 500, 2700, 1800, 300],
-          backgroundColor: 'rgba(92, 71, 161, 0.2)',
-          borderColor: '#5c47a1',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.3
+            label: 'Sales (₱)',
+            data: <?php echo json_encode($weeklyTotals); ?>,
+            backgroundColor: 'rgba(120, 71, 161, 0.2)',
+            borderColor: 'rgba(161, 71, 153, 0.2)',
+            borderWidth: 1
         }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false }
-        },
+    },
+    options: {
         scales: {
-          y: { beginAtZero: true }
+            y: {
+                beginAtZero: true
+            }
         }
-      }
-    });
+    }
+});
+
   </script>
   <?php if (isset($_SESSION['show_low_stock_modal']) && $_SESSION['show_low_stock_modal']): ?>
     <script>
