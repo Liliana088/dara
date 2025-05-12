@@ -83,31 +83,47 @@ foreach ($product_ids as $index => $product_id) {
 }
 
 // If stock is sufficient, proceed with recording the sale
-if ($is_stock_sufficient) {
-    // Calculate subtotal and markup as before
-    $subtotal = 0;
-    $total_markup = 0;
-    $price_at_sale_list = [];
-    
-    foreach ($product_ids as $index => $product_id) {
-        $quantity = intval($quantities[$index]);
-        
-        // Fetch cost and markup for each product
-        $stmt = $conn->prepare("SELECT cost, markup FROM products WHERE id = ?");
-        $stmt->bind_param("i", $product_id);
-        $stmt->execute();
-        $stmt->bind_result($cost, $markup);
-        $stmt->fetch();
-        $stmt->close();
+// Flag to track if stock is sufficient for all products
+$is_stock_sufficient = true;
 
-        $subtotal += $cost * $quantity;
-        $markup_amount = ceil($cost * ($markup / 100));
-        $total_markup += $markup_amount * $quantity;
-        $price_at_sale_list[] = $cost + ($markup / 100 * $cost);
+// First, check if there is enough stock for all products
+foreach ($product_ids as $index => $product_id) {
+    $quantity = intval($quantities[$index]);
+
+    $check = $conn->prepare("SELECT Description, stock FROM products WHERE id = ?");
+    $check->bind_param("i", $product_id);
+    $check->execute();
+    $check->bind_result($product_name, $available_stocks);
+    $check->fetch();
+    $check->close();
+
+    // If stock is insufficient, set the flag to false and break the loop
+    if ($available_stocks < $quantity) {
+        $is_stock_sufficient = false;
+        echo "
+        <script>
+            alert('Cannot proceed with sale for \"{$product_name}\". Only {$available_stocks} in stock.');
+            window.location.href = 'sales.php';
+        </script>";
+        exit;
     }
+}
 
+// Check if cash_received is less than total cost
+$total_cost = $subtotal + $total_markup; // Calculate total cost
+
+if ($cash_received < $total_cost) {
+    echo "
+    <script>
+        alert('Cash received is less than total cost. Sale cannot be processed.');
+        window.location.href = 'sales.php';
+    </script>";
+    exit;
+}
+
+// If stock is sufficient and cash is enough, proceed with recording the sale
+if ($is_stock_sufficient) {
     // Insert the main sale record into the sales table
-    $total_cost = $subtotal + $total_markup;
     $stmt = $conn->prepare("INSERT INTO sales (seller, payment_method, subtotal, markup, total_cost, date, cash_received, change_given) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssdddsdd", $seller, $payment_method, $subtotal, $total_markup, $total_cost, $date, $cash_received, $change_given);
     $stmt->execute();
