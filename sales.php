@@ -6,12 +6,6 @@ if (!isset($_SESSION['user_name'])) {
     exit();
 }
 
-// Block guest access
-if ($_SESSION['user_name'] === 'Guest') {
-    header("Location: dashboard.php");
-    exit();
-}
-
 include "db_conn.php";
 //insert ung products sa dropdown sa add sales
 $productQuery = "SELECT * FROM products";
@@ -60,25 +54,87 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
 
   $total_cost = $subtotal + $total_markup;
   $change = $cash_received - $total_cost;
-  // Insert into sales table
-  $stmt = $conn->prepare("INSERT INTO sales (seller, payment_method, subtotal, markup, total_cost, date,cash_received, change_given) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-  $stmt->bind_param("ssdddsdd", $seller, $payment_method, $subtotal, $total_markup, $total_cost, $date, $cash_received, $change_given);
-  $stmt->execute();
-  $sale_id = $stmt->insert_id;
-  $stmt->close();
 
-  // Insert into sales_items table
-  foreach ($product_ids as $index => $product_id) {
-      $quantity = intval($quantities[$index]);
-      $price_at_sale = $price_at_sale_list[$index];
+//checks if there is stocks for sale
+// Flag to track if stock is sufficient for all products
+$is_stock_sufficient = true;
 
-      $stmt = $conn->prepare("INSERT INTO sales_items (sale_id, product_id, quantity, price_at_sale) VALUES (?, ?, ?, ?)");
-      $stmt->bind_param("iiid", $sale_id, $product_id, $quantity, $price_at_sale);
-      $stmt->execute();
-      $stmt->close();
-  }
+// First, check if there is enough stock for all products
+foreach ($product_ids as $index => $product_id) {
+    $quantity = intval($quantities[$index]);
+
+    $check = $conn->prepare("SELECT Description, stock FROM products WHERE id = ?");
+    $check->bind_param("i", $product_id);
+    $check->execute();
+    $check->bind_result($product_name, $available_stocks);
+    $check->fetch();
+    $check->close();
+
+    // If stock is insufficient, set the flag to false and break the loop
+    if ($available_stocks < $quantity) {
+        $is_stock_sufficient = false;
+        echo "
+        <script>
+            alert('Cannot proceed with sale for \"{$product_name}\". Only {$available_stocks} in stock.');
+            window.location.href = 'sales.php';
+        </script>";
+        exit;
+    }
 }
 
+// If stock is sufficient, proceed with recording the sale
+if ($is_stock_sufficient) {
+    // Calculate subtotal and markup as before
+    $subtotal = 0;
+    $total_markup = 0;
+    $price_at_sale_list = [];
+    
+    foreach ($product_ids as $index => $product_id) {
+        $quantity = intval($quantities[$index]);
+        
+        // Fetch cost and markup for each product
+        $stmt = $conn->prepare("SELECT cost, markup FROM products WHERE id = ?");
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $stmt->bind_result($cost, $markup);
+        $stmt->fetch();
+        $stmt->close();
+
+        $subtotal += $cost * $quantity;
+        $markup_amount = ceil($cost * ($markup / 100));
+        $total_markup += $markup_amount * $quantity;
+        $price_at_sale_list[] = $cost + ($markup / 100 * $cost);
+    }
+
+    // Insert the main sale record into the sales table
+    $total_cost = $subtotal + $total_markup;
+    $stmt = $conn->prepare("INSERT INTO sales (seller, payment_method, subtotal, markup, total_cost, date, cash_received, change_given) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssdddsdd", $seller, $payment_method, $subtotal, $total_markup, $total_cost, $date, $cash_received, $change_given);
+    $stmt->execute();
+    $sale_id = $stmt->insert_id;  // Get the inserted sale ID
+    $stmt->close();
+
+    // Now, insert sale items and update stock
+    foreach ($product_ids as $index => $product_id) {
+        $quantity = intval($quantities[$index]);
+        $price_at_sale = $price_at_sale_list[$index];
+
+        // Insert sale item into the sales_items table
+        $stmt = $conn->prepare("INSERT INTO sales_items (sale_id, product_id, quantity, price_at_sale) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("iiid", $sale_id, $product_id, $quantity, $price_at_sale);
+        $stmt->execute();
+        $stmt->close();
+
+        // Deduct stock from products table
+        $stmt = $conn->prepare("UPDATE products SET stock = stock - ? WHERE id = ?");
+        $stmt->bind_param("ii", $quantity, $product_id);
+        $stmt->execute();
+        $stmt->close();
+    }
+}
+
+
+}
 // Items per page (default to 7, override if set in query)
 $itemsPerPage = isset($_GET['entries']) ? max(1, (int)$_GET['entries']) : 7;
 
