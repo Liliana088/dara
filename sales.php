@@ -97,58 +97,47 @@ foreach ($product_ids as $index => $product_id) {
     $check->fetch();
     $check->close();
 
-    // If stock is insufficient, set the flag to false and break the loop
     if ($available_stocks < $quantity) {
-        $is_stock_sufficient = false;
-        echo "
-        <script>
-            alert('Cannot proceed with sale for \"{$product_name}\". Only {$available_stocks} in stock.');
-            window.location.href = 'sales.php';
-        </script>";
+        $_SESSION['error'] = "Cannot proceed with sale for \"{$product_name}\". Only {$available_stocks} in stock.";
+        header("Location: sales.php");
         exit;
     }
 }
 
 // Check if cash_received is less than total cost
-$total_cost = $subtotal + $total_markup; // Calculate total cost
+$total_cost = $subtotal + $total_markup;
 
 if ($cash_received < $total_cost) {
-    echo "
-    <script>
-        alert('Cash received is less than total cost. Sale cannot be processed.');
-        window.location.href = 'sales.php';
-    </script>";
+    $_SESSION['error'] = "Cash received was less than total cost. Sale was not processed.";
+    header("Location: sales.php");
     exit;
 }
 
-// If stock is sufficient and cash is enough, proceed with recording the sale
+// If all validations pass, proceed with the sale
 if ($is_stock_sufficient) {
-    // Insert the main sale record into the sales table
+    // Insert the main sale record
     $stmt = $conn->prepare("INSERT INTO sales (seller, payment_method, subtotal, markup, total_cost, date, cash_received, change_given) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssdddsdd", $seller, $payment_method, $subtotal, $total_markup, $total_cost, $date, $cash_received, $change_given);
     $stmt->execute();
-    $sale_id = $stmt->insert_id;  // Get the inserted sale ID
+    $sale_id = $stmt->insert_id;
     $stmt->close();
 
-    // Now, insert sale items and update stock
+    // Insert each item and update stock
     foreach ($product_ids as $index => $product_id) {
         $quantity = intval($quantities[$index]);
         $price_at_sale = $price_at_sale_list[$index];
 
-        // Insert sale item into the sales_items table
         $stmt = $conn->prepare("INSERT INTO sales_items (sale_id, product_id, quantity, price_at_sale) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("iiid", $sale_id, $product_id, $quantity, $price_at_sale);
         $stmt->execute();
         $stmt->close();
 
-        // Deduct stock from products table
         $stmt = $conn->prepare("UPDATE products SET stock = stock - ? WHERE id = ?");
         $stmt->bind_param("ii", $quantity, $product_id);
         $stmt->execute();
         $stmt->close();
     }
 }
-
 
 }
 // Items per page (default to 7, override if set in query)
@@ -390,22 +379,40 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
         </div>
 
         <!-- Cash Section -->
-        <div class="row mb-3">
-        <div class="col">
-            <label class="form-label">Cash Received</label>
-            <input type="number" id="cashReceived" name="received" class="form-control" required>
-        </div>
-        <div class="col">
-            <label class="form-label fw-bold">Change</label>
-            <input type="text" id="changeDue" name="change" class="form-control" readonly>
-        </div>
-        </div>
+<div class="row mb-3">
+  <div class="col">
+    <label class="form-label">Cash Received</label>
+    <input type="number" id="cashReceived" name="received" class="form-control" required>
+    <div class="invalid-feedback">
+      Cash is less than total cost. Please enter enough.
+    </div>
+    <div class="valid-feedback">
+      Enough cash received.
+    </div>
+  </div>
 
-        <input type="hidden" name="subtotal" id="subtotalInput">
-        <input type="hidden" name="markup" id="markupInput">
-        <input type="hidden" name="payment_method" value="Cash">
-        <input type="hidden" name="date" value="<?php echo date('Y-m-d H:i:s'); ?>">
-        <button type="submit" class="btn" style="background-color: #dc7a91; color: white; width: 100%;">Save Sale</button>
+  <div class="col">
+    <label class="form-label fw-bold">Change</label>
+    <input type="text" id="changeDue" name="change" class="form-control" readonly>
+  </div>
+</div>
+
+<!-- Warning Message -->
+<?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+<!-- Hidden values -->
+<input type="hidden" name="subtotal" id="subtotalInput">
+<input type="hidden" name="markup" id="markupInput">
+<input type="hidden" name="payment_method" value="Cash">
+<input type="hidden" name="date" value="<?php echo date('Y-m-d H:i:s'); ?>">
+
+<!-- Submit button -->
+<button type="submit" id="saveSaleButton" class="btn" style="background-color: #dc7a91; color: white; width: 100%;">Save Sale</button>
         </form>
     </div>
     </div>

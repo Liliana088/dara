@@ -194,3 +194,86 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+//cash received validation
+
+document.addEventListener("DOMContentLoaded", function () {
+  const cashInput = document.getElementById("cashReceived");
+  const changeField = document.getElementById("changeDue");
+  const totalCostInput = document.getElementById("totalCostInput");
+  const totalCostDisplay = document.getElementById("totalCostDisplay");
+  const warningText = document.getElementById("cashWarning");
+  const saveButton = document.getElementById("saveSaleButton");
+
+  function calculateTotals() {
+    let subtotal = 0;
+    let markup = 0;
+
+    document.querySelectorAll(".product-row").forEach(row => {
+      const cost = parseFloat(row.querySelector(".cost").textContent || 0);
+      const markupVal = parseFloat(row.querySelector(".markup").textContent || 0);
+      const qty = parseFloat(row.querySelector(".quantity").value || 0);
+
+      subtotal += cost * qty;
+      markup += markupVal * qty;
+    });
+
+    const total = subtotal + markup;
+    totalCostDisplay.value = total.toFixed(2);
+    totalCostInput.value = total.toFixed(2);
+    document.getElementById("subtotalInput").value = subtotal.toFixed(2);
+    document.getElementById("markupInput").value = markup.toFixed(2);
+
+    validateCash();
+  }
+
+  function validateCash() {
+    const cash = parseFloat(cashInput.value) || 0;
+    const total = parseFloat(totalCostInput.value) || 0;
+    const change = cash - total;
+  
+    if (cash < total) {
+      const alert = bootstrap.Alert.getOrCreateInstance(document.getElementById("cashWarning"));
+      document.getElementById("cashWarning").style.display = "block";
+      saveButton.disabled = true;
+      changeField.value = "0.00";
+    } else {
+      document.getElementById("cashWarning").style.display = "none";
+      saveButton.disabled = false;
+      changeField.value = change.toFixed(2);
+    }
+  }
+  
+
+  // Hook into relevant events
+  cashInput.addEventListener("input", validateCash);
+
+  // Attach quantity change handler
+  document.querySelectorAll(".quantity").forEach(input => {
+    input.addEventListener("input", calculateTotals);
+  });
+
+  // Initial calculation on page load
+  calculateTotals();
+});
+//checks the cash received
+const cashInput = document.getElementById('cashReceived');
+  const totalCostInput = document.getElementById('totalCost');
+
+  cashInput.addEventListener('input', () => {
+    const cash = parseFloat(cashInput.value);
+    const totalCost = parseFloat(totalCostInput.value);
+
+    if (!isNaN(cash) && !isNaN(totalCost)) {
+      if (cash >= totalCost) {
+        cashInput.classList.remove('is-invalid');
+        cashInput.classList.add('is-valid');
+      } else {
+        cashInput.classList.remove('is-valid');
+        cashInput.classList.add('is-invalid');
+      }
+    } else {
+      cashInput.classList.remove('is-valid');
+      cashInput.classList.add('is-invalid');
+    }
+  });
