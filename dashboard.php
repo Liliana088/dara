@@ -7,6 +7,12 @@ if (!isset($_SESSION['user_name'])) {
 
 include "db_conn.php"; //connect to database
 
+// Get today's total sales
+$sql = "SELECT SUM(total_cost) AS total_sales FROM sales WHERE DATE(date) = CURDATE()";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+$total_sales = $row['total_sales'] ?? 0;  // Default to 0 if no sales for today
+
 // Count number of categories
 $categoryQuery = "SELECT COUNT(*) as category_count FROM categories";
 $categoryResult = mysqli_query($conn, $categoryQuery);
@@ -137,12 +143,13 @@ while ($row = mysqli_fetch_assoc($weeklyResult)) {
   <div class="main-content">
     <h2 class="section-header">Dashboard</h2>
     <div class="row g-4">
+
   <!-- Sales Card -->
   <div class="col-md-4">
     <div class="card text-white position-relative" style="background-color: #7673C0;">
       <div class="card-body">
-        <div style="font-size: 1.5rem; font-weight: bold;">₱11,832.00</div>
-        <div>Sales</div>
+        <div style="font-size: 1.5rem; font-weight: bold;">₱<?php echo number_format($total_sales, 2); ?></div>
+        <div>Today's Sales</div>
       </div>
       <div class="card-footer border-0">
         <a href="sales.php" class="text-white text-decoration-none">More info <i class="bi bi-arrow-right"></i></a>
