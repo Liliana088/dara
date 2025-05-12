@@ -44,43 +44,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
       $stmt->fetch();
       $stmt->close();
 
-      $subtotal += $cost * $quantity;
-      $markup_amount = ceil ($cost * ($markup / 100));
-      $total_markup += ($markup / 100) * $cost * $quantity;
+      $subtotal += round($cost * $quantity);
+      $markup_amount = round ($cost * ($markup / 100));
+      $total_markup += round(($markup / 100) * $cost * $quantity, 2);
       $price_at_sale_list[] = $cost + ($markup / 100 * $cost);
       
 
   }
 
-  $total_cost = $subtotal + $total_markup;
+  $total_cost = round($subtotal + $total_markup);
   $change = $cash_received - $total_cost;
-
-//checks if there is stocks for sale
-// Flag to track if stock is sufficient for all products
-$is_stock_sufficient = true;
-
-// First, check if there is enough stock for all products
-foreach ($product_ids as $index => $product_id) {
-    $quantity = intval($quantities[$index]);
-
-    $check = $conn->prepare("SELECT Description, stock FROM products WHERE id = ?");
-    $check->bind_param("i", $product_id);
-    $check->execute();
-    $check->bind_result($product_name, $available_stocks);
-    $check->fetch();
-    $check->close();
-
-    // If stock is insufficient, set the flag to false and break the loop
-    if ($available_stocks < $quantity) {
-        $is_stock_sufficient = false;
-        echo "
-        <script>
-            alert('Cannot proceed with sale for \"{$product_name}\". Only {$available_stocks} in stock.');
-            window.location.href = 'sales.php';
-        </script>";
-        exit;
-    }
-}
+  
 
 // If stock is sufficient, proceed with recording the sale
 // Flag to track if stock is sufficient for all products
@@ -288,9 +262,9 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
             $row['items'] = implode("<br>", $items);
             
             // Format subtotal, markup, and total cost to two decimal places
-            $formatted_subtotal = number_format(ceil($row['subtotal']), 2);
-            $formatted_markup = number_format(ceil($row['markup']), 2);
-            $formatted_total_cost = number_format(ceil($row['total_cost']), 2);            
+            $formatted_subtotal = number_format(round($row['subtotal']), 2);
+            $formatted_markup = number_format(round($row['markup']), 2);
+            $formatted_total_cost = number_format(round($row['total_cost']), 2);            
 
             // Display the sale information in the table row
             echo "<tr>

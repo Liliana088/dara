@@ -62,7 +62,7 @@ function updatePrice(selectElement) {
   const markup = parseFloat(selectedOption.dataset.markup) || 0;
   const markupAmount = (markup / 100) * cost;
   const rawPrice = cost + markupAmount;
-  const roundedPrice = Math.ceil(rawPrice);
+  const roundedPrice = Math.round(rawPrice);
 
   const row = selectElement.closest(".product-row");
   const quantity = parseInt(row.querySelector(".quantity").value) || 1;
@@ -87,13 +87,13 @@ function updateTotals() {
     const markupPercent = parseFloat(select?.selectedOptions[0]?.dataset.markup) || 0;
     const markupAmount = (markupPercent / 100) * cost;
     const rawPrice = cost + markupAmount;
-    const roundedPrice = Math.ceil(rawPrice);
+    const roundedPrice = Math.round(rawPrice);
 
     const priceField = row.querySelector(".price-field");
     if (priceField) priceField.value = (roundedPrice * quantity).toFixed(2);
 
-    subtotal += Math.ceil(cost) * quantity;
-    totalMarkup += Math.ceil(markupAmount) * quantity;
+    subtotal += Math.round(cost) * quantity;
+    totalMarkup += Math.round(markupAmount) * quantity;
   });
 
   const total = subtotal + totalMarkup;
@@ -258,22 +258,16 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 //checks the cash received
 const cashInput = document.getElementById('cashReceived');
-  const totalCostInput = document.getElementById('totalCost');
+const changeInput = document.getElementById('changeDue');
 
-  cashInput.addEventListener('input', () => {
-    const cash = parseFloat(cashInput.value);
-    const totalCost = parseFloat(totalCostInput.value);
+cashInput.addEventListener('input', () => {
+  const change = parseFloat(changeInput.value);
 
-    if (!isNaN(cash) && !isNaN(totalCost)) {
-      if (cash >= totalCost) {
-        cashInput.classList.remove('is-invalid');
-        cashInput.classList.add('is-valid');
-      } else {
-        cashInput.classList.remove('is-valid');
-        cashInput.classList.add('is-invalid');
-      }
-    } else {
-      cashInput.classList.remove('is-valid');
-      cashInput.classList.add('is-invalid');
-    }
-  });
+  if (!isNaN(change) && change >= 0) {
+    cashInput.classList.remove('is-invalid');
+    cashInput.classList.add('is-valid');
+  } else {
+    cashInput.classList.remove('is-valid');
+    cashInput.classList.add('is-invalid');
+  }
+});
