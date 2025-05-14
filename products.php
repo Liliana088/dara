@@ -220,8 +220,34 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <!-- Form Inputs -->
-              <!-- ... (Already well-indented in your original code) -->
+              <div class="mb-3">
+                <label class="form-label">Product Code</label>
+                <input type="text" class="form-control" name="code" id="codeInput" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <input type="text" class="form-control" name="description" id="descriptionInput" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Stock</label>
+                <input type="number" class="form-control" name="stock" id="stockInput" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Cost</label>
+                <input type="number" step="0.01" class="form-control" name="buying_price" id="buyingPriceInput" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Markup %</label>
+                <input type="number" step="0.01" class="form-control" name="markup" id="markupInput" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Markup Amount</label>
+                <input type="number" step="0.01" class="form-control" name="selling_price" id="sellingPriceInput" readonly>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Category</label>
+                <select class="form-select" name="category" id="categorySelect" required></select>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button>
@@ -241,8 +267,35 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <!-- Form Inputs -->
-              <!-- ... (Already well-indented in your original code) -->
+              <input type="hidden" name="id" id="editId">
+              <div class="mb-3">
+                <label class="form-label">Product Code</label>
+                <input type="text" class="form-control" name="code" id="editCode" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <input type="text" class="form-control" name="description" id="editDescription" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Stock</label>
+                <input type="number" class="form-control" name="stock" id="editStock" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Cost</label>
+                <input type="number" step="0.01" class="form-control" name="buying_price" id="editBuyingPrice" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Markup %</label>
+                <input type="number" step="0.01" class="form-control" name="markup" id="editMarkup" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Markup Amount</label>
+                <input type="number" step="0.01" class="form-control" name="selling_price" id="editSellingPrice" readonly>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Category</label>
+                <select class="form-select" name="category" id="editCategorySelect" required></select>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary" id="saveEditBtn">Save Changes</button>
