@@ -57,10 +57,9 @@ $weeklyTotals = [];
 
 while ($row = mysqli_fetch_assoc($weeklyResult)) {
     $weeklyDates[] = $row['sale_date'];
-    $weeklyTotals[] = $row['total_sales'];
+    $weeklyTotals[] = round($row['total_sales'], 2);
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -150,7 +149,7 @@ while ($row = mysqli_fetch_assoc($weeklyResult)) {
     <div class="col-md-4">
       <div class="card text-white position-relative" style="background-color: #7673C0;">
         <div class="card-body">
-          <div style="font-size: 1.5rem; font-weight: bold;">₱<?php echo number_format($total_sales, 2); ?></div>
+          <div style="font-size: 1.5rem; font-weight: bold;">₱<?php echo number_format(round($total_sales), 2); ?></div>
           <div>Today's Sales</div>
         </div>
         <div class="card-footer border-0">
