@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $stmt->close();
   }
 }
-
 $conn->close();
 ?>
 
@@ -60,8 +59,7 @@ $conn->close();
 
   <body>
     <div class="login-container">
-        <img src="img/dara.png" alt="Logo" class="top-image">
-
+      <img src="img/dara.png" alt="Logo" class="top-image">
         <form method="post" action="" class="needs-validation" novalidate>
           <div class="mb-1 text-start">   
             <div class="input-group has-validation">
@@ -95,7 +93,6 @@ $conn->close();
 
     <!-- Bootstrap 5 JavaScript for validation -->
     <script src="bootstrap-offline/js/bootstrap.bundle.min.js"></script>
-
     <script>
     (() => {
       'use strict';
@@ -111,7 +108,5 @@ $conn->close();
       });
     })();
     </script>
-
-
   </body>
 </html>
