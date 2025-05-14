@@ -68,8 +68,7 @@ while ($row = mysqli_fetch_assoc($weeklyResult)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>POS System Dashboard</title>
     <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/dara/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
     <link href="/dara/css/dashboard.css" rel="stylesheet">
   </head>
@@ -217,6 +216,7 @@ while ($row = mysqli_fetch_assoc($weeklyResult)) {
 
     <!-- Scripts -->
     <script src="bootstrap-offline/js/bootstrap.bundle.min.js"></script>
+    <script src="/dara/js/chart.umd.min.js"></script>
     <script>
       function toggleSidebar() {
         const sidebar = document.getElementById("sidebarMenu");
