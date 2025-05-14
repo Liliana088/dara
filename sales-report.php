@@ -164,6 +164,7 @@ while ($row = mysqli_fetch_assoc($topResult)) {
       <div class="main-content">
     <div class="d-flex justify-content-between align-items-center">
       <h3>Sales Report</h3>
+      <button class="btn btn-success" onclick="exportReport()">Download Report</button>
     </div>
     <div class="sales-graph mt-4">
 
@@ -310,6 +311,22 @@ while ($row = mysqli_fetch_assoc($topResult)) {
               }
           }
       });
+
+      function exportReport() {
+        const date = document.getElementById('filterDate').value;
+        const seller = document.getElementById('filterSeller').value;
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+
+        // Build query parameters
+        const params = new URLSearchParams({
+            date, seller, start, end
+        });
+
+        // Redirect to the PHP script with filters
+        window.location.href = 'export_sales_report.php?' + params.toString();
+    }
+
     </script>
   </body>
 </html>
