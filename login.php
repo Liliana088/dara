@@ -47,12 +47,8 @@ $conn->close();
   <head>
     <meta charset="UTF-8">
     <title>Login Form</title>
-
-    <!-- Bootstrap 5 CSS -->
     <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
-
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/dara/fontawesome/css/all.min.css" />
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
     <link rel="stylesheet" href="/dara/css/login.css">
   </head>
