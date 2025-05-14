@@ -49,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
       $total_markup += round(($markup / 100) * $cost * $quantity, 2);
       $price_at_sale_list[] = $cost + ($markup / 100 * $cost);
       
-
   }
 
   $total_cost = round($subtotal + $total_markup);
@@ -109,6 +108,11 @@ if ($is_stock_sufficient) {
         $stmt->bind_param("ii", $quantity, $product_id);
         $stmt->execute();
         $stmt->close();
+
+    // After successful insert:
+    $_SESSION['success'] = "Sale added successfully!";
+    header("Location: sales.php");
+    exit();
     }
 }
 
@@ -278,7 +282,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                             <td>{$row['date']}</td>
                             <td>{$row['items']}</td>
                             <td>
-                                <a href='receipt.php?id={$row['id']}' target='_blank' class='icon-box print-icon' onclick='printReceipt({$row['id']})'>
+                                <a href='receipt.php?id={$row['id']}&display={$total_sales}' target='_blank' class='icon-box print-icon' onclick='printReceipt({$row['id']}, {$total_sales})'>
                                     <i class='bi bi-printer-fill'></i>
                                 </a>
                                 <a href='delete_sales.php?id={$row['id']}' class='icon-box delete-icon'

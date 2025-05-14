@@ -40,6 +40,7 @@ $stmt->execute();
 $itemsResult = $stmt->get_result();
 $sale['cash_received'];
 $sale['change_given'];
+$display_number = isset($_GET['display']) ? intval($_GET['display']) : $sale['id'];
 
 ?>
 
@@ -62,7 +63,7 @@ $sale['change_given'];
     <body onload="window.print()">
         <div class="receipt">
             <h2>Sales Receipt</h2>
-            <p><strong>Receipt #:</strong> <?= $sale['id'] ?></p>
+            <p><strong>Receipt #:</strong> <?= $display_number ?></p>
             <p><strong>Seller:</strong> <?= htmlspecialchars($sale['seller'] ?? 'Unknown Seller') ?></p>
             <p><strong>Date:</strong> <?= date("F j, Y", strtotime($sale['date'])) ?></p>
 
@@ -86,12 +87,9 @@ $sale['change_given'];
             <p><strong>Change:</strong> <span style="float: right;">₱<?= number_format(round($sale['change_given']), 2) ?></span></p>
         </div>
         <script>
-            function printReceipt(saleId) {
-                // Open the receipt page in a new window/tab
-                var printWindow = window.open('receipt.php?id=' + saleId, '_blank');
-
-                // Wait for the receipt page to fully load before triggering print
-                printWindow.onload = function() {
+            function printReceipt(saleId, displayNumber) {
+                var printWindow = window.open('receipt.php?id=' + saleId + '&display=' + displayNumber, '_blank');
+                printWindow.onload = function () {
                     printWindow.print();
                 };
             }
