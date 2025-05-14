@@ -5,12 +5,6 @@ if (!isset($_SESSION['user_name'])) {
     header("Location: login.php");
     exit();
 }
-
-// Block guest access
-if ($_SESSION['user_name'] === 'Guest') {
-  header("Location: dashboard.php");
-  exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -22,237 +16,8 @@ if ($_SESSION['user_name'] === 'Guest') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <style>
-        body {
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-      }
-
-      .navbar {
-        background-color: #393E75;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1100;
-        height: 56px;
-      }
-
-      .navbar .navbar-brand {
-        display: flex;
-        align-items: center;
-      }
-
-      .navbar-brand img.logo {
-        height: 40px;
-        margin-left: 10px;
-      }
-
-      .navbar-toggler {
-        font-size: 1.3rem;
-        margin-left: auto;
-      }
-
-      .sidebar {
-        position: fixed;
-        top: 56px;
-        left: 0;
-        height: calc(100vh - 56px);
-        width: 60px;
-        background-color: #5c47a1;
-        transition: width 0.3s ease;
-        overflow-x: hidden;
-        z-index: 1000;
-      }
-
-      .sidebar.expand {
-        width: 200px;
-      }
-
-      .sidebar .nav-link {
-        color: #fff;
-        display: flex;
-        align-items: center;
-        padding: 12px 15px;
-      }
-
-      .sidebar .nav-link i {
-        font-size: 1.2rem;
-        width: 24px;
-        text-align: center;
-      }
-
-      .sidebar .nav-link span {
-        display: none;
-        margin-left: 10px;
-        white-space: nowrap;
-      }
-
-      .sidebar.expand .nav-link span {
-        display: inline;
-      }
-
-      .main-content {
-        margin-left: 60px;
-        padding: 80px 20px 20px 20px;
-        transition: margin-left 0.3s ease;
-      }
-
-      .sidebar.expand ~ .main-content {
-        margin-left: 200px;
-      }
-
-      .card {
-        margin-top: 20px;
-      }
-
-      .category-table th,
-      .category-table td {
-        vertical-align: middle;
-      }
-
-      @media (max-width: 991px) {
-        .sidebar {
-          width: 0;
-        }
-
-        .sidebar.expand {
-          width: 200px;
-        }
-
-        .main-content {
-          margin-left: 0;
-        }
-
-        .sidebar.expand ~ .main-content {
-          margin-left: 200px;
-        }
-      }
-
-      /* icon buttons */
-      .icon-box {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-      }
-
-      .edit-icon {
-        background-color: #A9CCE9;
-      }
-
-      .delete-icon {
-        background-color: #AF0F0F;
-      }
-
-      /* modal styling from design */
-      .box {
-        width: 570px;
-        height: 318px;
-      }
-
-      .box .group {
-        position: relative;
-        width: 100%;
-        height: 100%;
-      }
-
-      .box .overlap {
-        position: relative;
-        width: 100%;
-        height: 100%;
-      }
-
-      .rectangle {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-color: #ffbbb5;
-      }
-
-      .div {
-        position: absolute;
-        width: 100%;
-        height: 61px;
-        background-color: #dc7a91;
-      }
-
-      .text-wrapper {
-        position: absolute;
-        top: 16px;
-        left: 18px;
-        font-family: "Inter", sans-serif;
-        color: #ffffff;
-        font-size: 24px;
-      }
-
-      .rectangle-2 {
-        position: absolute;
-        width: 100%;
-        height: 77px;
-        bottom: 0;
-        background-color: #ffbbb5;
-        border-top: 1px solid #b1b1b1;
-      }
-
-      .close-button .overlap-group {
-        background-color: #FE978E;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        text-align: center;
-        line-height: 45px;
-        font-size: 18px;
-        color:rgb(240, 233, 233);
-      }
-
-      .close-button {
-        position: absolute;
-        left: 18px;
-        bottom: 13px;
-        width: 84px;
-        height: 51px;
-      }
-
-      .fa-remove {
-        position: absolute;
-        top: 18px;
-        right: 18px;
-        font-size: 20px;
-        color: #ffffff;
-      }
-
-      .modal-dialog {
-        margin-top: 80px; /* adjustment of modal */
-      }
-
-      /* Custom modal header color */
-        .custom-header {
-        background-color: #DC7A91; /* Modal header color */
-        color: white; /* White text color */
-        }
-
-        /* Custom modal body color */
-        .custom-body {
-        background-color: #FFBBB5; /* Modal body color */
-        }
-
-        /* Custom button color */
-        .btn-custom {
-        background-color: #8E588A; /* Save user button color */
-        color: white; /* White text on button */
-        }
-
-        .btn-custom:hover {
-        background-color: #7A4874; /* Darker shade on hover */
-        }
-
-    </style>
+    <link href="/dara/css/users.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="img/daraa.ico">
 </head>
 <body>
     <!-- Navbar -->
@@ -329,12 +94,12 @@ if ($_SESSION['user_name'] === 'Guest') {
                             <td>
                                 <!-- Edit Button -->
                                 <button class="icon-box edit-icon" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>" onclick="openEditUserModal('<?php echo $row['id']; ?>', '<?php echo $row['name']; ?>', '<?php echo $row['username']; ?>', '<?php echo $row['password']; ?>')">
-                                    <i class="bi bi-pencil-square"></i>
+                                    <i class="bi bi-pencil-fill"></i>
                                 </button>
 
                                 <!-- Delete Button -->
                                 <button class="icon-box delete-icon" data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $row['id']; ?>">
-                                    <i class="bi bi-trash"></i>
+                                    <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
@@ -349,6 +114,7 @@ if ($_SESSION['user_name'] === 'Guest') {
                                     </div>
                                     <div class="modal-body custom-body">
                                         <form action="edit_user.php" method="POST">
+                                            <input type="hidden" name="id" value="<?php echo $row['id']; ?>" />
                                             <div class="mb-3">
                                                 <input type="text" name="name" class="form-control" id="editName<?php echo $row['id']; ?>" placeholder="Enter a new name" value="<?php echo $row['name']; ?>" required />
                                             </div>
@@ -358,6 +124,9 @@ if ($_SESSION['user_name'] === 'Guest') {
                                             <div class="mb-3">
                                                 <input type="password" name="password" class="form-control" id="editPassword<?php echo $row['id']; ?>" placeholder="Enter a new password" required />
                                             </div>
+                                            <div class="mb-3">
+                                                <input type="password" name="confirm_password" class="form-control" id="editConfirmPassword<?php echo $row['id']; ?>" placeholder="Confirm password" required />
+                                            </div>
                                             <div class="text-center">
                                                 <button type="submit" class="btn btn-custom">Save Changes</button>
                                             </div>
@@ -366,6 +135,7 @@ if ($_SESSION['user_name'] === 'Guest') {
                                 </div>
                             </div>
                         </div>
+
 
                         <!-- Delete Modal -->
                         <div class="modal fade" id="deleteModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -404,20 +174,22 @@ if ($_SESSION['user_name'] === 'Guest') {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body custom-body">
-                    <form action="add_user.php" method="POST">
-                        <div class="mb-3">
-                            <input type="text" name="name" class="form-control" placeholder="Name" required />
-                        </div>
-                        <div class="mb-3">
-                            <input type="text" name="username" class="form-control" placeholder="Username" required />
-                        </div>
-                        <div class="mb-3">
-                            <input type="password" name="password" class="form-control" placeholder="Password" required />
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-custom">Add User</button>
-                        </div>
-                    </form>
+                <form action="add_user.php" method="POST">
+                    <div class="mb-3">
+                        <input type="text" name="name" class="form-control" placeholder="Name" required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" name="username" class="form-control" placeholder="Username" required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" name="password" class="form-control" placeholder="Password" required />
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-custom">Add User</button>
+                    </div>
+                </form>
+
                 </div>
             </div>
         </div>
@@ -437,6 +209,24 @@ if ($_SESSION['user_name'] === 'Guest') {
             document.getElementById('editUsername' + id).value = username;
             document.getElementById('editPassword' + id).value = password;
         }
+
+        // Function to open the Edit User Modal and fill in the data
+        function openEditUserModal(id, name, username, password) {
+            document.getElementById('editName' + id).value = name;
+            document.getElementById('editUsername' + id).value = username;
+            document.getElementById('editPassword' + id).value = password;
+        }
+
+        // Password confirmation validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const password = document.getElementById('editPassword<?php echo $row['id']; ?>').value;
+            const confirmPassword = document.getElementById('editConfirmPassword<?php echo $row['id']; ?>').value;
+            
+            if (password !== confirmPassword) {
+                e.preventDefault(); // Prevent form submission
+                alert('Passwords do not match. Please confirm the password correctly.');
+            }
+        });
     </script>
 </body>
 </html>

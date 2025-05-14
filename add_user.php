@@ -1,30 +1,32 @@
 <?php
 include "db_conn.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['username'], $_POST['password'], $_POST['status'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['username'], $_POST['password'])) {
     $name = trim($_POST['name']);
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
-    $status = trim($_POST['status']);
-    $last_login = date('Y-m-d H:i:s'); // Set current time for last_login
+    $status = 'Active'; // Automatically set to Active
+    $last_login = date('Y-m-d H:i:s'); // Current system date and time
 
-    if ($name !== '' && $username !== '' && $password !== '' && $status !== '') {
-        // Hash the password for security
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    if ($name !== '' && $username !== '' && $password !== '') {
 
-        // Prepare the SQL statement to insert the user into the database
+        // Directly use the plain password without hashing
         $stmt = $conn->prepare("INSERT INTO users (name, username, password, Status, last_login) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $name, $username, $hashed_password, $status, $last_login);
+        $stmt->bind_param("sssss", $name, $username, $password, $status, $last_login);
 
         if ($stmt->execute()) {
-            echo "success"; // Successfully added user
+            echo "success";
+            header("Location: users.php");
+            exit(); // Make sure to stop further execution
         } else {
-            echo "error"; // Failed to add user
+            echo "error";
         }
 
         $stmt->close();
     } else {
-        echo "empty"; // Some fields are empty
+        echo "empty";
     }
+} else {
+    echo "Invalid request";
 }
 ?>
