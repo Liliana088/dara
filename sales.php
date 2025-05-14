@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_name'])) {
 }
 
 include "db_conn.php";
-//insert ung products sa dropdown sa add sales
+//insert products on dropdown, add sales
 $productQuery = "SELECT * FROM products";
 $productResult = $conn->query($productQuery);
 
@@ -20,7 +20,7 @@ if ($productResult->num_rows > 0) {
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset($_POST['quantity'])) {
-  $seller = $_POST['seller'];
+  $seller = $_SESSION['user_name'];
   $payment_method = $_POST['payment_method'];
   $date = $_POST['date'];
   $product_ids = $_POST['product_id'];
@@ -57,7 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
   
 
 // If stock is sufficient, proceed with recording the sale
-// Flag to track if stock is sufficient for all products
 $is_stock_sufficient = true;
 
 // First, check if there is enough stock for all products
@@ -124,15 +123,14 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $itemsPerPage;
 
 // Modify the SQL query to include LIMIT and OFFSET for pagination
-$sql = "SELECT sales.id, users.name AS seller_name, sales.payment_method, sales.subtotal, sales.markup, sales.total_cost, sales.date,
-               GROUP_CONCAT(DISTINCT products.description  ORDER BY products.description ASC) AS product_names
+$sql = "SELECT sales.id, users.name AS seller, sales.payment_method, sales.subtotal, sales.markup, sales.total_cost, sales.date,
+        GROUP_CONCAT(DISTINCT products.description ORDER BY products.description ASC) AS product_names
         FROM sales
         LEFT JOIN sales_items ON sales.id = sales_items.sale_id
         LEFT JOIN products ON sales_items.product_id = products.id
         LEFT JOIN users ON sales.seller = users.id
         GROUP BY sales.id
         LIMIT $itemsPerPage OFFSET $offset";
-
 
 // Execute the query to get the paginated sales data
 $result = mysqli_query($conn, $sql);
@@ -219,7 +217,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>#</th>
                 <th>Seller</th>
                 <th>Payment Method</th>
                 <th>Subtotal</th>
@@ -231,67 +229,74 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
               </tr>
             </thead>
             <tbody name="salesTablebody" id="salesTableBody">
-              <?php
-              // Fetch all sales records first
-              $sql = "SELECT * FROM sales ORDER BY date DESC";
-              $result = $conn->query($sql);
+            <?php
+            // Fetch all sales records first
+            $sql = "SELECT * FROM sales ORDER BY date DESC";
+            $result = $conn->query($sql);
 
-              if ($result->num_rows > 0) {
-                  // Loop through each sale
-                  while($row = $result->fetch_assoc()) {
-                      $sale_id = $row['id'];
+            if ($result->num_rows > 0) {
+                // Get the total number of sales records
+                $total_sales = $result->num_rows;
+                
+                // Loop through each sale
+                while($row = $result->fetch_assoc()) {
+                    $sale_id = $row['id'];
 
-                      // Fetch items for this sale
-                      $itemsStmt = $conn->prepare("
-                          SELECT p.Description AS product_name, si.quantity
-                          FROM sales_items si
-                          JOIN products p ON p.id = si.product_id
-                          WHERE si.sale_id = ?
-                      ");
-                      $itemsStmt->bind_param("i", $sale_id);
-                      $itemsStmt->execute();
-                      $itemsResult = $itemsStmt->get_result();
+                    // Fetch items for this sale
+                    $itemsStmt = $conn->prepare("
+                        SELECT p.Description AS product_name, si.quantity
+                        FROM sales_items si
+                        JOIN products p ON p.id = si.product_id
+                        WHERE si.sale_id = ?
+                    ");
+                    $itemsStmt->bind_param("i", $sale_id);
+                    $itemsStmt->execute();
+                    $itemsResult = $itemsStmt->get_result();
 
-                      // Store all item names and quantities
-                      $items = [];
-                      while ($itemRow = $itemsResult->fetch_assoc()) {
-                          $items[] = $itemRow['product_name'] . " (" . $itemRow['quantity'] . ")";
-                      }
+                    // Store all item names and quantities
+                    $items = [];
+                    while ($itemRow = $itemsResult->fetch_assoc()) {
+                        $items[] = $itemRow['product_name'] . " (" . $itemRow['quantity'] . ")";
+                    }
 
-                      // Combine the items into a string
-                      $row['items'] = implode("<br>", $items);
+                    // Combine the items into a string
+                    $row['items'] = implode("<br>", $items);
 
-                      // Format subtotal, markup, and total cost to two decimal places
-                      $formatted_subtotal = number_format(round($row['subtotal']), 2);
-                      $formatted_markup = number_format(round($row['markup']), 2);
-                      $formatted_total_cost = number_format(round($row['total_cost']), 2);
+                    // Format subtotal, markup, and total cost to two decimal places
+                    $formatted_subtotal = number_format(round($row['subtotal']), 2);
+                    $formatted_markup = number_format(round($row['markup']), 2);
+                    $formatted_total_cost = number_format(round($row['total_cost']), 2);
 
-                      // Display the sale information in the table row
-                      echo "<tr>
-                              <td>{$row['id']}</td>
-                              <td>{$row['seller']}</td>
-                              <td>{$row['payment_method']}</td>
-                              <td>₱{$formatted_subtotal}</td>
-                              <td>₱{$formatted_markup}</td>
-                              <td>₱{$formatted_total_cost}</td>
-                              <td>{$row['date']}</td>
-                              <td>{$row['items']}</td>
-                              <td>
-                                  <a href='receipt.php?id={$row['id']}' target='_blank' class='icon-box print-icon' onclick='printReceipt({$row['id']})'>
-                                      <i class='bi bi-printer-fill'></i>
-                                  </a>
-                                  <a href='delete_sales.php?id={$row['id']}' class='icon-box delete-icon'
-                                    onclick='return confirm(\"Are you sure you want to delete this sale?\");'>
-                                      <i class='fa-solid fa-trash'></i>
-                                  </a>
-                              </td>
-                          </tr>";
-                  }
-              } else {
-                  // If no sales records exist, show this message
-                  echo "<tr><td colspan='8'>No sales records found.</td></tr>";
-              }
-              ?>
+                    // Display the sale information in the table row with the counter decreasing
+                    echo "<tr>
+                            <td>{$total_sales}</td> <!-- Display counter in reverse order -->
+                            <td>{$row['seller']}</td>
+                            <td>{$row['payment_method']}</td>
+                            <td>₱{$formatted_subtotal}</td>
+                            <td>₱{$formatted_markup}</td>
+                            <td>₱{$formatted_total_cost}</td>
+                            <td>{$row['date']}</td>
+                            <td>{$row['items']}</td>
+                            <td>
+                                <a href='receipt.php?id={$row['id']}' target='_blank' class='icon-box print-icon' onclick='printReceipt({$row['id']})'>
+                                    <i class='bi bi-printer-fill'></i>
+                                </a>
+                                <a href='delete_sales.php?id={$row['id']}' class='icon-box delete-icon'
+                                  onclick='return confirm(\"Are you sure you want to delete this sale?\");'>
+                                    <i class='fa-solid fa-trash'></i>
+                                </a>
+                            </td>
+                        </tr>";
+
+                    // Decrement the counter for the next row
+                    $total_sales--;
+                }
+            } else {
+                // If no sales records exist, show this message
+                echo "<tr><td colspan='9'>No sales records found.</td></tr>";
+            }
+            ?>
+
             </tbody>
           </table>
         </div>
