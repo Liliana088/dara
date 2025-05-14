@@ -92,9 +92,29 @@ body {
   }
 
   .card-footer {
-    background-color:666B9E
+    background-color:#666B9E;
   }
 
+  .button-export{
+    background-color: #FE978E;
+    border: 1px solid #ccc;
+  }
+
+  .button-export:hover {
+    background-color: #44113d;
+    color: white; 
+  }
+
+  .btn-apply{
+    background-color: #3f1835;
+    border: 1px solid #ccc;
+    color: white; 
+  }
+
+  .btn-apply:hover {
+    background-color: #7c2170;
+    color: white; 
+  }
   @media (max-width: 991px) {
     .sidebar {
       width: 0;

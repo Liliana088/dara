@@ -163,7 +163,7 @@ while ($row = mysqli_fetch_assoc($topResult)) {
       <div class="main-content">
     <div class="d-flex justify-content-between align-items-center">
       <h3>Sales Report</h3>
-      <button class="btn btn-success" onclick="exportReport()">Download Report</button>
+      <button class="btn button-export" onclick="exportReport()">Download Report</button>
     </div>
     <div class="sales-graph mt-4">
 
@@ -188,7 +188,7 @@ while ($row = mysqli_fetch_assoc($topResult)) {
           <?php endforeach; ?>
         </select>
 
-        <button class="btn btn-primary" onclick="applyFilter()">Apply</button>
+        <button class="btn btn-apply" onclick="applyFilter()">Apply</button>
       </div>
       <h4 class="text-center">SALES GRAPH</h4>
         <canvas id="salesChart" height="100"></canvas>
