@@ -139,7 +139,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                 <th scope="col">Markup %</th>
                 <th scope="col">Markup Amount</th>
                 <th scope="col">Date Added</th>
-                <th scope="col">Action</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody id="productTableBody">

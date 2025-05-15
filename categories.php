@@ -109,7 +109,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Category Name</th>
-                  <th scope="col">Action</th>
+                  <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody id="categoryTableBody">
