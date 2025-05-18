@@ -40,7 +40,6 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
     <title>Category Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
     <link href="/dara/css/categories.css" rel="stylesheet" />
     </head>
@@ -125,7 +124,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                         <i class="bi bi-pencil-fill"></i>
                       </a>
                       <a href="delete_category.php?id=<?php echo $row['id']; ?>" class="icon-box delete-icon" onclick="return confirm('Are you sure you want to delete this category?');">
-                        <i class="fa-solid fa-trash"></i>
+                        <i class="bi bi-trash-fill"></i>
                       </a>
                     </td>
                   </tr>
@@ -172,7 +171,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                 <button class="btn" id="saveCategoryBtn" style="position:absolute;top:252px;left:395px;background-color:#dc7a91;color:#fff;width:153px;height:51px;">
                   Save Category
                 </button>
-                <i class="bi bi-x-lg fa-remove" data-bs-dismiss="modal" style="cursor:pointer;"></i>
+                <i class="bi bi-x-lg" data-bs-dismiss="modal" style="cursor:pointer;"></i>
               </div>
             </div>
           </div>
@@ -198,7 +197,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                 <button class="btn" id="saveEditCategoryBtn" style="position:absolute;top:252px;left:395px;background-color:#dc7a91;color:#fff;width:153px;height:51px;">
                   Save Changes
                 </button>
-                <i class="bi bi-x-lg fa-remove" data-bs-dismiss="modal" style="cursor:pointer;"></i>
+                <i class="bi bi-x-lg" data-bs-dismiss="modal" style="cursor:pointer;"></i>
               </div>
             </div>
           </div>
