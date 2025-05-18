@@ -90,9 +90,9 @@ while ($row = mysqli_fetch_assoc($topResult)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>POS System Dashboard</title>
     <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
-    <link rel="stylesheet" href="/dara/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="bootstrap-icons/font/bootstrap-icons.css">
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
-    <link href="/dara/css/sales-report.css" rel="stylesheet">
+    <link href="css/sales-report.css" rel="stylesheet">
   </head>
   <body>
     <!-- Navbar -->
@@ -208,7 +208,7 @@ while ($row = mysqli_fetch_assoc($topResult)) {
 
     <!-- Scripts -->
     <script src="bootstrap-offline/js/bootstrap.bundle.min.js"></script>
-    <script src="/dara/js/chart.js"></script>
+    <script src="js/chart.js"></script>
     <script>
       function toggleSidebar() {
         const sidebar = document.getElementById("sidebarMenu");
