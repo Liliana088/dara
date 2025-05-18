@@ -56,9 +56,9 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product Management</title>
     <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
-    <link rel="stylesheet" href="/dara/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="bootstrap-icons/font/bootstrap-icons.css">
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
-    <link href="/dara/css/products.css" rel="stylesheet" />
+    <link href="css/products.css" rel="stylesheet" />
   </head>
   <body>
     <!-- Navbar -->
