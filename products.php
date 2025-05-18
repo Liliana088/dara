@@ -57,7 +57,6 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
     <title>Product Management</title>
     <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="/dara/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/dara/fontawesome/css/all.min.css" />
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
     <link href="/dara/css/products.css" rel="stylesheet" />
   </head>
@@ -180,7 +179,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                       <i class="bi bi-pencil-fill"></i>
                     </a>
                     <a href="delete_product.php?id=<?php echo $row['id']; ?>" class="icon-box delete-icon" onclick="return confirm('Are you sure you want to delete this product?');">
-                      <i class="fa-solid fa-trash"></i>
+                      <i class="bi bi-trash-fill"></i>
                     </a>
                   </td>
                 </tr>
