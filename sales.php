@@ -154,7 +154,6 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
     <title>Sales Management</title>
     <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="/dara/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/dara/fontawesome/css/all.min.css" />
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
     <link href="/dara/css/sales.css" rel="stylesheet" />
 
@@ -301,7 +300,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                                   <i class='bi bi-printer-fill'></i>
                               </a>
                               <a href='void_sales.php?id=<?= $row['id'] ?>' class='icon-box delete-icon' onclick='return confirm("Are you sure you want to void this sale?");'>
-                                  <i class='fa-solid fa-trash'></i>
+                                  <i class='bi bi-trash-fill'></i>
                               </a>
                           </td>
                       </tr>
@@ -338,7 +337,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                 <div class="mb-2 d-flex align-items-center product-row">
                   <div class="input-group me-2" style="width: 1300px;">
                     <button type="button" class="btn btn-outline-danger delete-row-btn">
-                      <i class="fa-solid fa-trash"></i>
+                      <i class="bi bi-trash-fill"></i>
                     </button>
                     <select class="form-select product-select" name="product_id[]" onchange="updatePrice(this)">
                       <?php foreach($products as $product): ?>
