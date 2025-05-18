@@ -88,7 +88,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
         <div class="card">
           <!-- Add Category Button -->
           <div>
-            <button class="btn ms-2 mb-2 mt-2" data-bs-toggle="modal" data-bs-target="#addCategoryModal" style="background-color:#dc7a91;color:#fff;width:153px;height:37px;">
+            <button class="btn btn-add ms-2 mb-2 mt-2" data-bs-toggle="modal" data-bs-target="#addCategoryModal" style="background-color:#dc7a91;color:#fff;width:153px;height:37px;">
               <i class="bi bi-plus-lg"></i> Add Category    
             </button> 
           </div>

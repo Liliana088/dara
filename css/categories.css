@@ -38,6 +38,7 @@ body {
         background-color: #5c47a1;
         transition: width 0.3s ease;
         overflow-x: hidden;
+        padding-top: 1rem;
         z-index: 1000;
       }
 
@@ -50,6 +51,12 @@ body {
         display: flex;
         align-items: center;
         padding: 12px 15px;
+      }
+
+      .sidebar .nav-link:hover {
+        background-color: #483381; /* example highlight color */
+        color: #fff;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
 
       .sidebar .nav-link i {
@@ -85,6 +92,22 @@ body {
       .category-table th,
       .category-table td {
         vertical-align: middle;
+      }
+
+      .btn-add {
+        background-color: #dc7a91;
+        color: #fff;
+        width: 153px;
+        height: 37px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+      }
+
+      .btn-add:hover {
+        background-color: #483381 !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+        color: #fff !important;
+        cursor: pointer;
       }
 
       @media (max-width: 991px) {
