@@ -38,6 +38,7 @@
         background-color: #5c47a1;
         transition: width 0.3s ease;
         overflow-x: hidden;
+        padding-top: 1rem;
         z-index: 1000;
       }
 
@@ -50,6 +51,11 @@
         display: flex;
         align-items: center;
         padding: 12px 15px;
+      }
+      
+      .sidebar .nav-link:hover {
+        background-color: #483381;
+        color: #fff;
       }
 
       .sidebar .nav-link i {
