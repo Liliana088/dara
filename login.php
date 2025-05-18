@@ -57,16 +57,7 @@ $conn->close();
     <div class="login-container">
       <img src="img/dara.png" alt="Logo" class="top-image">
         <form method="post" action="" class="needs-validation" novalidate>
-          <div class="mb-1 text-start">   
-            <div class="input-group has-validation">
-              <span class="input-group-text "><i class="fa fa-user"></i></span>
-              <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
-              <div class="invalid-feedback">
-                Please enter your username.
-              </div>
-            </div>
-          </div>
-
+        <input type="hidden" name="username" value="admin">
           <div class="mb-3 text-start">      
             <div class="input-group has-validation">
               <span class="input-group-text"><i class="fa fa-lock"></i></span>
