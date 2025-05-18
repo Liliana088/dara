@@ -1,230 +1,188 @@
     body {
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
+      background: #f4f4f4;
+      margin: 0;
+      padding-top: 56px;
     }
 
     .navbar {
-        background-color: #393E75;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1100;
-        height: 56px;
+      background-color: #393E75;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1500;
+      height: 56px;
     }
 
     .navbar .navbar-brand {
-        display: flex;
-        align-items: center;
+      display: flex;
+      align-items: center;
     }
 
     .navbar-brand img.logo {
-        height: 40px;
-        margin-left: 10px;
+      height: 40px;
+      margin-left: 10px;
     }
 
     .navbar-toggler {
-        font-size: 1.3rem;
-        margin-left: auto;
+      font-size: 1.3rem;
+      margin-left: auto;
     }
 
     .sidebar {
-        position: fixed;
-        top: 56px;
-        left: 0;
-        height: calc(100vh - 56px);
-        width: 60px;
-        background-color: #5c47a1;
-        transition: width 0.3s ease;
-        overflow-x: hidden;
-        z-index: 1000;
+      position: fixed;
+      top: 56px;
+      left: 0;
+      height: calc(100vh - 56px);
+      width: 60px;
+      background-color: #5c47a1;
+      transition: width 0.3s ease;
+      padding-top: 1rem;
+      z-index: 1000;
     }
-
     .sidebar.expand {
-        width: 200px;
+      width: 200px;
     }
 
     .sidebar .nav-link {
-        color: #fff;
-        display: flex;
-        align-items: center;
-        padding: 12px 15px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+    }
+
+    .sidebar .nav-link:hover {
+      background-color: #483381;
+      color: #fff;
     }
 
     .sidebar .nav-link i {
-        font-size: 1.2rem;
-        width: 24px;
-        text-align: center;
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
     }
 
     .sidebar .nav-link span {
-        display: none;
-        margin-left: 10px;
-        white-space: nowrap;
+      display: none;
+      margin-left: 10px;
+      white-space: nowrap;
     }
 
     .sidebar.expand .nav-link span {
-        display: inline;
+      display: inline;
+    }
+
+    .wrapper {
+      display: flex;
     }
 
     .main-content {
-        margin-left: 60px;
-        padding: 80px 20px 20px 20px;
-        transition: margin-left 0.3s ease;
+      margin-left: 10px;
+      transition: margin-left 0.3s ease;
+      padding: 25px 20px 20px 10px;
+      width: 100%;
     }
 
-    .sidebar.expand ~ .main-content {
-        margin-left: 200px;
+    .wrapper.sidebar-expanded .main-content {
+      margin-left: 200px;
     }
 
     .card {
-        margin-top: 20px;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
     }
 
-    .category-table th,
-    .category-table td {
-        vertical-align: middle;
-    }
-
-    @media (max-width: 991px) {
-        .sidebar {
-        width: 0;
-        }
-
-    .sidebar.expand {
-        width: 200px;
-        }
-
-    .main-content {
-        margin-left: 0;
-        }
-
-    .sidebar.expand ~ .main-content {
-        margin-left: 200px;
-        }
-    }
-
-      /* icon buttons */
-    .icon-box {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-        border: none; /* ✅ Prevents default borders */
-        outline: none;
-    }
-
-    .edit-icon {
-        background-color: #A9CCE9;
-    }
-
-    .delete-icon {
-        background-color: #AF0F0F;
-    }
-
-      /* modal styling from design */
-    .box {
-        width: 570px;
-        height: 318px;
-    }
-
-    .box .group {
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
-
-    .box .overlap {
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
-
-    .rectangle {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-color: #ffbbb5;
-    }
-
-    .div {
-        position: absolute;
-        width: 100%;
-        height: 61px;
-        background-color: #dc7a91;
-    }
-
-    .text-wrapper {
-        position: absolute;
-        top: 16px;
-        left: 18px;
-        font-family: "Inter", sans-serif;
-        color: #ffffff;
-        font-size: 24px;
-    }
-
-    .rectangle-2 {
-        position: absolute;
-        width: 100%;
-        height: 77px;
-        bottom: 0;
-        background-color: #ffbbb5;
-        border-top: 1px solid #b1b1b1;
-    }
-
-    .close-button .overlap-group {
-        background-color: #FE978E;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        text-align: center;
-        line-height: 45px;
-        font-size: 18px;
-        color:rgb(240, 233, 233);
-    }
-
-    .close-button {
-        position: absolute;
-        left: 18px;
-        bottom: 13px;
-        width: 84px;
-        height: 51px;
-    }
-
-    .fa-remove {
-        position: absolute;
-        top: 18px;
-        right: 18px;
-        font-size: 20px;
-        color: #ffffff;
+    .user-info-wrapper {
+        margin-left: 60px; 
+        font-size: 1.8rem;
+         margin-bottom: 20px;
     }
 
     .modal-dialog {
-        margin-top: 80px; /* adjustment of modal */
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 80px;
+      max-width: 600px;
+      transition: margin-top 0.3s ease;
     }
 
-      /* Custom modal header color */
-        .custom-header {
-        background-color: #DC7A91; /* Modal header color */
-        color: white; /* White text color */
-        }
+    .wrapper.sidebar-expanded .modal-dialog {
+      margin-left: 200px;
+    }
 
-        /* Custom modal body color */
-        .custom-body {
-        background-color: #FFBBB5; /* Modal body color */
-        }
+    .modal-content {
+      padding-left: 60px; /* prevents sidebar overlap */
+    }
 
-        /* Custom button color */
-        .btn-custom {
-        background-color: #8E588A; /* Save user button color */
-        color: white; /* White text on button */
-        }
+    .wrapper.sidebar-expanded .modal-content {
+      max-width: calc(100vw - 200px);
+    }
 
-        .btn-custom:hover {
-        background-color: #7A4874; /* Darker shade on hover */
-        }
+
+    .modal {
+      z-index: 2000 !important;
+    }
+
+.alert {
+  position: fixed;
+  top: 55px;
+  right: -320px;   /* start hidden off-screen on the right */
+  width: 300px;
+  z-index: 1600;
+  transition: right 0.3s ease;
+  max-width: 90vw;
+}
+
+.alert.show {
+  right: 145px;     /* slide in to 20px from right */
+}
+
+
+    @media (max-width: 991px) {
+  .modal-content {
+    padding-left: 10px;
+  }
+}
+
+    @media (max-width: 991px) {
+      .sidebar {
+        width: 0;
+      }
+
+      .sidebar.expand {
+        width: 200px;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .wrapper.sidebar-expanded .main-content {
+        margin-left: 200px;
+      }
+    }
+
+    .avatar img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #e29ca8;
+    }
+
+    .user-info i {
+      color: #d86b87;
+    }
+
+    .btn-custom {
+      background-color: #e29ca8;
+      border: none;
+      color: white;
+    }
+
+    .btn-custom:hover {
+      background-color: #d86b87;
+      color: white;
+    }
