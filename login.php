@@ -48,7 +48,7 @@ $conn->close();
     <meta charset="UTF-8">
     <title>Login Form</title>
     <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
-    <link rel="stylesheet" href="/dara/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="/dara/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
     <link rel="stylesheet" href="/dara/css/login.css">
   </head>
@@ -60,7 +60,7 @@ $conn->close();
         <input type="hidden" name="username" value="admin">
           <div class="mb-3 text-start">      
             <div class="input-group has-validation">
-              <span class="input-group-text"><i class="fa fa-lock"></i></span>
+              <span class="input-group-text"><i class="bi bi-lock-fill" style="transform: scaleX(1.5);"></i></span>
               <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
               <div class="invalid-feedback">
                 Please enter your password.
