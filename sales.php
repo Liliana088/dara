@@ -153,9 +153,9 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
     <meta charset="UTF-8">
     <title>Sales Management</title>
     <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
-    <link rel="stylesheet" href="/dara/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="bootstrap-icons/font/bootstrap-icons.css">
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
-    <link href="/dara/css/sales.css" rel="stylesheet" />
+    <link href="css/sales.css" rel="stylesheet" />
 
   </head>
   <body>
