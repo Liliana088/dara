@@ -22,7 +22,8 @@ foreach ($period as $date) {
 }
 
 $query = "SELECT DATE(date) AS sale_date, SUM(total_cost) AS total_sales, SUM(markup) AS total_profit 
-          FROM sales WHERE DATE(date) BETWEEN '$startOfWeek' AND '$endOfWeek' 
+          FROM sales 
+          WHERE voided = 0 AND DATE(date) BETWEEN '$startOfWeek' AND '$endOfWeek' 
           GROUP BY DATE(date)";
 $result = mysqli_query($conn, $query);
 while ($row = mysqli_fetch_assoc($result)) {
@@ -39,7 +40,7 @@ $end = date('Y-m-d', strtotime('sunday this week'));
 
 $sql = "SELECT DATE(date) AS sale_date, SUM(total_cost) AS total_sales, SUM(markup) AS total_profit
         FROM sales
-        WHERE DATE(date) BETWEEN '$start' AND '$end'
+        WHERE voided = 0 AND DATE(date) BETWEEN '$start' AND '$end'
         GROUP BY DATE(date)
         ORDER BY sale_date ASC";
 

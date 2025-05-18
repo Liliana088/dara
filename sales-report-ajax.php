@@ -28,10 +28,14 @@ if ($dateFilter === 'month') {
 if ($rangeStart && $rangeEnd) {
     $where[] = "DATE(date) BETWEEN '$rangeStart' AND '$rangeEnd'";
 }
+// Ignore voided sales
+$where[] = "voided = 0";
+
 if (!empty($sellerFilter)) {
     $where[] = "seller = '" . mysqli_real_escape_string($conn, $sellerFilter) . "'";
 }
 $whereSql = $where ? "WHERE " . implode(' AND ', $where) : '';
+
 
 // Fetch actual sales data
 $salesData = [];

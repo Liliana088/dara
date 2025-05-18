@@ -271,27 +271,41 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                     $formatted_markup = number_format(round($row['markup']), 2);
                     $formatted_total_cost = number_format(round($row['total_cost']), 2);
 
+                    //show voided
+                    $badge = $row['voided'] ? "<span class='badge bg-danger'>Voided</span>" : "";
                     // Display the sale information in the table row with the counter decreasing
-                    echo "<tr>
-                            <td>{$total_sales}</td> <!-- Display counter in reverse order -->
-                            <td>{$row['seller']}</td>
-                            <td>{$row['payment_method']}</td>
-                            <td>₱{$formatted_subtotal}</td>
-                            <td>₱{$formatted_markup}</td>
-                            <td>₱{$formatted_total_cost}</td>
-                            <td>{$row['date']}</td>
-                            <td>{$row['items']}</td>
-                            <td>
-                                <a href='receipt.php?id={$row['id']}&display={$total_sales}' target='_blank' class='icon-box print-icon' onclick='printReceipt({$row['id']}, {$total_sales})'>
-                                    <i class='bi bi-printer-fill'></i>
-                                </a>
-                                <a href='delete_sales.php?id={$row['id']}' class='icon-box delete-icon'
-                                  onclick='return confirm(\"Are you sure you want to delete this sale?\");'>
-                                    <i class='fa-solid fa-trash'></i>
-                                </a>
-                            </td>
-                        </tr>";
-
+                    if ($row['voided']): ?>
+                      <tr class="text-danger">
+                          <td><?= $total_sales ?></td>
+                          <td><?= $row['seller'] ?></td>
+                          <td><?= $row['payment_method'] ?></td>
+                          <td><s>₱<?= $formatted_subtotal ?></s></td>
+                          <td><s>₱<?= $formatted_markup ?></s></td>
+                          <td><s>₱<?= $formatted_total_cost ?></s></td>
+                          <td><?= $row['date'] ?></td>
+                          <td><?= $row['items'] ?></td>
+                          <td><span class="badge bg-danger">Voided</span></td>
+                      </tr>
+                  <?php else: ?>
+                      <tr>
+                          <td><?= $total_sales ?></td>
+                          <td><?= $row['seller'] ?></td>
+                          <td><?= $row['payment_method'] ?></td>
+                          <td>₱<?= $formatted_subtotal ?></td>
+                          <td>₱<?= $formatted_markup ?></td>
+                          <td>₱<?= $formatted_total_cost ?></td>
+                          <td><?= $row['date'] ?></td>
+                          <td><?= $row['items'] ?></td>
+                          <td>
+                              <a href='receipt.php?id=<?= $row['id'] ?>&display=<?= $total_sales ?>' target='_blank' class='icon-box print-icon' onclick='printReceipt(<?= $row['id'] ?>, <?= $total_sales ?>)'>
+                                  <i class='bi bi-printer-fill'></i>
+                              </a>
+                              <a href='void_sales.php?id=<?= $row['id'] ?>' class='icon-box delete-icon' onclick='return confirm("Are you sure you want to void this sale?");'>
+                                  <i class='fa-solid fa-trash'></i>
+                              </a>
+                          </td>
+                      </tr>
+                  <?php endif;
                     // Decrement the counter for the next row
                     $total_sales--;
                 }
