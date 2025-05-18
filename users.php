@@ -50,9 +50,9 @@ if (isset($_GET['msg'])) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>User Info</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
-  <link href="./css/users.css" rel="stylesheet">
+  <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
+  <link rel="stylesheet" href="bootstrap-icons/font/bootstrap-icons.css">
+  <link href="css/users.css" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="img/daraa.ico">
 </head>
 <body>
@@ -149,7 +149,7 @@ if (isset($_GET['msg'])) {
   </div>
 </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="bootstrap-offline/js/bootstrap.bundle.min.js"></script>
   <script>
     function toggleSidebar() {
       const sidebar = document.getElementById("sidebarMenu");
