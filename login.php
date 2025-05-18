@@ -48,9 +48,9 @@ $conn->close();
     <meta charset="UTF-8">
     <title>Login Form</title>
     <link href="bootstrap-offline/css/bootstrap.css" rel="stylesheet">
-    <link rel="stylesheet" href="/dara/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="bootstrap-icons/font/bootstrap-icons.css">
     <link rel="icon" type="image/x-icon" href="img/daraa.ico">
-    <link rel="stylesheet" href="/dara/css/login.css">
+    <link rel="stylesheet" href="css/login.css">
   </head>
 
   <body>
