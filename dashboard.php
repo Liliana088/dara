@@ -132,7 +132,7 @@ while ($row = mysqli_fetch_assoc($weeklyResult)) {
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/dara/users.php">
-            <i class="bi bi-people"></i>
+            <i class="bi bi-person-circle"></i>
             <span>User Management</span>
           </a>
         </li>

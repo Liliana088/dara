@@ -74,7 +74,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
           <li class="nav-item"><a class="nav-link" href="/dara/products.php"><i class="bi bi-box-seam"></i><span>Products</span></a></li>
           <li class="nav-item"><a class="nav-link" href="/dara/sales.php"><i class="bi bi-currency-dollar"></i><span>Sales</span></a></li>
           <li class="nav-item"><a class="nav-link" href="/dara/sales-report.php"><i class="bi bi-bar-chart-line"></i><span>Sales Report</span></a></li>
-          <li class="nav-item"><a class="nav-link" href="/dara/users.php"><i class="bi bi-people"></i><span>User Management</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="/dara/users.php"><i class="bi bi-person-circle"></i><span>User Management</span></a></li>
         </ul>
       </div>
 
