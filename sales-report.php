@@ -183,7 +183,7 @@ while ($row = mysqli_fetch_assoc($topResult)) {
         </div>
 
         <select id="filterSeller" class="form-select w-auto">
-          <option value="">All Sellers</option>
+          <option value="">Seller</option>
           <?php foreach ($sellers as $seller): ?>
             <option value="<?= $seller ?>"><?= $seller ?></option>
           <?php endforeach; ?>
