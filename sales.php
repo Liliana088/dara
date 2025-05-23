@@ -300,7 +300,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                                   <i class='bi bi-printer-fill'></i>
                               </a>
                               <a href='void_sales.php?id=<?= $row['id'] ?>' class='icon-box delete-icon' onclick='return confirm("Are you sure you want to void this sale?");'>
-                                  <i class='bi bi-trash-fill'></i>
+                                  <i class='bi bi-file-earmark-x-fill'></i>
                               </a>
                           </td>
                       </tr>
