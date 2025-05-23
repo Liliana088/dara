@@ -48,6 +48,7 @@ $display_number = isset($_GET['display']) ? intval($_GET['display']) : $sale['id
 <html>
     <head>
         <title>Receipt #<?= $sale_id ?></title>
+        <link rel="icon" type="image/x-icon" href="img/daraa.ico">
         <style>
             body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
             .receipt { width: 300px; margin: auto; padding: 20px; border: 1px solid #ddd; }
