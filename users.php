@@ -91,62 +91,62 @@ if (isset($_GET['msg'])) {
         </ul>
       </div>
 
-  <!-- Main Content -->
-  <div class="main-content">
-      <!-- Title -->
-      <h4 class="mb-6 user-info-wrapper">User Info</h4>
-    <div class="card p-5">
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Title -->
+        <h4 class="mb-6 user-info-wrapper">User Information</h4>
+      <div class="card p-5">
 
 
-  <!-- Responsive avatar and button layout -->
-  <div class="d-flex justify-content-between align-items-start flex-wrap">
-    <div class="d-flex align-items-center">
-      <div class="avatar me-4">
-        <img src="<?php echo !empty($user['profile_image']) ? 'uploads/' . htmlspecialchars($user['profile_image']) : 'img/default-user.jpg'; ?>" alt="Profile" style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%; border: 3px solid #e49da4;" />
+    <!-- Responsive avatar and button layout -->
+    <div class="d-flex justify-content-between align-items-start flex-wrap">
+      <div class="d-flex align-items-center">
+        <div class="avatar me-4">
+          <img src="<?php echo !empty($user['profile_image']) ? 'uploads/' . htmlspecialchars($user['profile_image']) : 'img/default-user.jpg'; ?>" alt="Profile" style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%; border: 3px solid #e49da4;" />
+        </div>
+        <div class="user-info">
+          <p><i class="bi bi-person-fill"></i> <strong>Name:</strong> <?php echo htmlspecialchars($user['name']); ?></p>
+          <p><i class="bi bi-person-vcard"></i> <strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></p>
+          <p><i class="bi bi-clock-history"></i> <strong>Last Login:</strong> <?php echo htmlspecialchars($user['last_login']); ?></p>
+        </div>
       </div>
-      <div class="user-info">
-        <p><i class="bi bi-person-fill"></i> <strong>Name:</strong> <?php echo htmlspecialchars($user['name']); ?></p>
-        <p><i class="bi bi-person-vcard"></i> <strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></p>
-        <p><i class="bi bi-clock-history"></i> <strong>Last Login:</strong> <?php echo htmlspecialchars($user['last_login']); ?></p>
+
+      <div>
+        <a href="#" class="btn btn-sm btn-custom mt-3 mt-md-0" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+          <i class="bi bi-pencil-square"></i> Edit Password
+        </a>
       </div>
     </div>
 
-    <div>
-      <a href="#" class="btn btn-sm btn-custom mt-3 mt-md-0" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-        <i class="bi bi-pencil-square"></i> Edit Password
-      </a>
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <form id="changePasswordForm" class="modal-content" method="POST" action="change_password.php">
+          <div class="modal-header">
+            <h5 class="modal-title" id="changePasswordLabel">Change Password</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="oldPassword" class="form-label">Old Password</label>
+              <input type="password" class="form-control" id="oldPassword" name="old_password" required />
+            </div>
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">New Password</label>
+              <input type="password" class="form-control" id="newPassword" name="new_password" required />
+            </div>
+            <div class="mb-3">
+              <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+              <input type="password" class="form-control" id="confirmNewPassword" name="confirm_new_password" required />
+            </div>
+            <div id="passwordError" class="text-danger"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-custom">Save</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
-
-  <!-- Change Password Modal -->
-  <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <form id="changePasswordForm" class="modal-content" method="POST" action="change_password.php">
-        <div class="modal-header">
-          <h5 class="modal-title" id="changePasswordLabel">Change Password</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="oldPassword" class="form-label">Old Password</label>
-            <input type="password" class="form-control" id="oldPassword" name="old_password" required />
-          </div>
-          <div class="mb-3">
-            <label for="newPassword" class="form-label">New Password</label>
-            <input type="password" class="form-control" id="newPassword" name="new_password" required />
-          </div>
-          <div class="mb-3">
-            <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
-            <input type="password" class="form-control" id="confirmNewPassword" name="confirm_new_password" required />
-          </div>
-          <div id="passwordError" class="text-danger"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-custom">Save</button>
-        </div>
-      </form>
-    </div>
-  </div>
 
     <script src="bootstrap-offline/js/bootstrap.bundle.min.js"></script>
     <script>
