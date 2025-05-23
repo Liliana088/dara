@@ -217,105 +217,106 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
             </div>
           </div>
 
-          <table class="table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Seller</th>
-                <th>Payment Method</th>
-                <th>Subtotal</th>
-                <th>Markup</th>
-                <th>Total Cost</th>
-                <th>Date</th>
-                <th>Items</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody name="salesTablebody" id="salesTableBody">
-            <?php
-            // Fetch all sales records first
-            $sql = "SELECT * FROM sales ORDER BY date DESC";
-            $result = $conn->query($sql);
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Seller</th>
+                  <th>Payment Method</th>
+                  <th>Subtotal</th>
+                  <th>Markup</th>
+                  <th>Total Cost</th>
+                  <th>Date</th>
+                  <th>Items</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody name="salesTablebody" id="salesTableBody">
+              <?php
+              // Fetch all sales records first
+              $sql = "SELECT * FROM sales ORDER BY date DESC";
+              $result = $conn->query($sql);
 
-            if ($result->num_rows > 0) {
-                // Get the total number of sales records
-                $total_sales = $result->num_rows;
-                
-                // Loop through each sale
-                while($row = $result->fetch_assoc()) {
-                    $sale_id = $row['id'];
+              if ($result->num_rows > 0) {
+                  // Get the total number of sales records
+                  $total_sales = $result->num_rows;
+                  
+                  // Loop through each sale
+                  while($row = $result->fetch_assoc()) {
+                      $sale_id = $row['id'];
 
-                    // Fetch items for this sale
-                    $itemsStmt = $conn->prepare("
-                        SELECT p.Description AS product_name, si.quantity
-                        FROM sales_items si
-                        JOIN products p ON p.id = si.product_id
-                        WHERE si.sale_id = ?
-                    ");
-                    $itemsStmt->bind_param("i", $sale_id);
-                    $itemsStmt->execute();
-                    $itemsResult = $itemsStmt->get_result();
+                      // Fetch items for this sale
+                      $itemsStmt = $conn->prepare("
+                          SELECT p.Description AS product_name, si.quantity
+                          FROM sales_items si
+                          JOIN products p ON p.id = si.product_id
+                          WHERE si.sale_id = ?
+                      ");
+                      $itemsStmt->bind_param("i", $sale_id);
+                      $itemsStmt->execute();
+                      $itemsResult = $itemsStmt->get_result();
 
-                    // Store all item names and quantities
-                    $items = [];
-                    while ($itemRow = $itemsResult->fetch_assoc()) {
-                        $items[] = $itemRow['product_name'] . " (" . $itemRow['quantity'] . ")";
-                    }
+                      // Store all item names and quantities
+                      $items = [];
+                      while ($itemRow = $itemsResult->fetch_assoc()) {
+                          $items[] = $itemRow['product_name'] . " (" . $itemRow['quantity'] . ")";
+                      }
 
-                    // Combine the items into a string
-                    $row['items'] = implode("<br>", $items);
+                      // Combine the items into a string
+                      $row['items'] = implode("<br>", $items);
 
-                    // Format subtotal, markup, and total cost to two decimal places
-                    $formatted_subtotal = number_format(round($row['subtotal']), 2);
-                    $formatted_markup = number_format(round($row['markup']), 2);
-                    $formatted_total_cost = number_format(round($row['total_cost']), 2);
+                      // Format subtotal, markup, and total cost to two decimal places
+                      $formatted_subtotal = number_format(round($row['subtotal']), 2);
+                      $formatted_markup = number_format(round($row['markup']), 2);
+                      $formatted_total_cost = number_format(round($row['total_cost']), 2);
 
-                    //show voided
-                    $badge = $row['voided'] ? "<span class='badge bg-danger'>Voided</span>" : "";
-                    // Display the sale information in the table row with the counter decreasing
-                    if ($row['voided']): ?>
-                      <tr class="text-danger">
-                          <td><?= $total_sales ?></td>
-                          <td><?= $row['seller'] ?></td>
-                          <td><?= $row['payment_method'] ?></td>
-                          <td><s>₱<?= $formatted_subtotal ?></s></td>
-                          <td><s>₱<?= $formatted_markup ?></s></td>
-                          <td><s>₱<?= $formatted_total_cost ?></s></td>
-                          <td><?= $row['date'] ?></td>
-                          <td><?= $row['items'] ?></td>
-                          <td><span class="badge bg-danger">Voided</span></td>
-                      </tr>
-                  <?php else: ?>
-                      <tr>
-                          <td><?= $total_sales ?></td>
-                          <td><?= $row['seller'] ?></td>
-                          <td><?= $row['payment_method'] ?></td>
-                          <td>₱<?= $formatted_subtotal ?></td>
-                          <td>₱<?= $formatted_markup ?></td>
-                          <td>₱<?= $formatted_total_cost ?></td>
-                          <td><?= $row['date'] ?></td>
-                          <td><?= $row['items'] ?></td>
-                          <td>
-                              <a href='receipt.php?id=<?= $row['id'] ?>&display=<?= $total_sales ?>' target='_blank' class='icon-box print-icon' onclick='printReceipt(<?= $row['id'] ?>, <?= $total_sales ?>)'>
-                                  <i class='bi bi-printer-fill'></i>
-                              </a>
-                              <a href='void_sales.php?id=<?= $row['id'] ?>' class='icon-box delete-icon' onclick='return confirm("Are you sure you want to void this sale?");'>
-                                  <i class='bi bi-file-earmark-x-fill'></i>
-                              </a>
-                          </td>
-                      </tr>
-                  <?php endif;
-                    // Decrement the counter for the next row
-                    $total_sales--;
-                }
-            } else {
-                // If no sales records exist, show this message
-                echo "<tr><td colspan='9'>No sales records found.</td></tr>";
-            }
-            ?>
-
-            </tbody>
-          </table>
+                      //show voided
+                      $badge = $row['voided'] ? "<span class='badge bg-danger'>Voided</span>" : "";
+                      // Display the sale information in the table row with the counter decreasing
+                      if ($row['voided']): ?>
+                        <tr class="text-danger">
+                            <td><?= $total_sales ?></td>
+                            <td><?= $row['seller'] ?></td>
+                            <td><?= $row['payment_method'] ?></td>
+                            <td><s>₱<?= $formatted_subtotal ?></s></td>
+                            <td><s>₱<?= $formatted_markup ?></s></td>
+                            <td><s>₱<?= $formatted_total_cost ?></s></td>
+                            <td><?= $row['date'] ?></td>
+                            <td><?= $row['items'] ?></td>
+                            <td><span class="badge bg-danger">Voided</span></td>
+                        </tr>
+                    <?php else: ?>
+                        <tr>
+                            <td><?= $total_sales ?></td>
+                            <td><?= $row['seller'] ?></td>
+                            <td><?= $row['payment_method'] ?></td>
+                            <td>₱<?= $formatted_subtotal ?></td>
+                            <td>₱<?= $formatted_markup ?></td>
+                            <td>₱<?= $formatted_total_cost ?></td>
+                            <td><?= $row['date'] ?></td>
+                            <td><?= $row['items'] ?></td>
+                            <td>
+                                <a href='receipt.php?id=<?= $row['id'] ?>&display=<?= $total_sales ?>' target='_blank' class='icon-box print-icon' onclick='printReceipt(<?= $row['id'] ?>, <?= $total_sales ?>)'>
+                                    <i class='bi bi-printer-fill'></i>
+                                </a>
+                                <a href='void_sales.php?id=<?= $row['id'] ?>' class='icon-box delete-icon' onclick='return confirm("Are you sure you want to void this sale?");'>
+                                    <i class='bi bi-file-earmark-x-fill'></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endif;
+                      // Decrement the counter for the next row
+                      $total_sales--;
+                  }
+              } else {
+                  // If no sales records exist, show this message
+                  echo "<tr><td colspan='9'>No sales records found.</td></tr>";
+              }
+              ?>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Add Sale Sidebar (Offcanvas) -->
