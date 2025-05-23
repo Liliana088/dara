@@ -231,6 +231,11 @@
       font-size: 24px;
     }
 
+    .modal-footer {
+      background-color: #dc7a91;
+      border-bottom: none;
+    }
+    
     .btn-close-white {
       background: none;
       border: none;
@@ -331,4 +336,3 @@
       background-color: #B5698E!important;
       color: white !important;
     }
-    

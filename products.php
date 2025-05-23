@@ -218,7 +218,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
               <h5 class="modal-title">Add Product</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="background-color:#ffbbb5;">
               <div class="mb-3">
                 <label class="form-label">Product Code</label>
                 <input type="text" class="form-control" name="code" id="codeInput" required>
@@ -249,7 +249,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
               </div>
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button>
+              <button type="submit" class="btn btn-primary" id="saveProductBtn" style="background-color:#ffbbb5;color:#000000;">Save Product</button>
             </div>
           </div>
         </form>
@@ -265,7 +265,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
               <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="background-color:#ffbbb5;">
               <input type="hidden" name="id" id="editId">
               <div class="mb-3">
                 <label class="form-label">Product Code</label>
@@ -297,7 +297,7 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
               </div>
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-primary" id="saveEditBtn">Save Changes</button>
+              <button type="submit" class="btn btn-savee" id="saveEditBtn" style="background-color:#ffbbb5;color:#000000;">Save Changes</button>
             </div>
           </div>
         </form>
