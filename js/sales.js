@@ -258,16 +258,23 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 //checks the cash received
 const cashInput = document.getElementById('cashReceived');
+const totalCostInput = document.getElementById('totalCost'); // Add this input in your HTML
 const changeInput = document.getElementById('changeDue');
 
 cashInput.addEventListener('input', () => {
-  const change = parseFloat(changeInput.value);
+  const cash = parseFloat(cashInput.value);
+  const total = parseFloat(totalCostInput.value);
 
-  if (!isNaN(change) && change >= 0) {
+  if (!isNaN(cash) && !isNaN(total) && cash >= total) {
     cashInput.classList.remove('is-invalid');
     cashInput.classList.add('is-valid');
+
+    // Optional: update the change due
+    const change = cash - total;
+    changeInput.value = change.toFixed(2);
   } else {
     cashInput.classList.remove('is-valid');
     cashInput.classList.add('is-invalid');
+    changeInput.value = ''; // clear or show 0.00 if preferred
   }
 });
