@@ -108,13 +108,14 @@ if ($is_stock_sufficient) {
         $stmt->bind_param("ii", $quantity, $product_id);
         $stmt->execute();
         $stmt->close();
+    }
 
-    // After successful insert:
+    // Now redirect after all inserts are done
     $_SESSION['success'] = "Sale added successfully!";
     header("Location: sales.php");
     exit();
-    }
 }
+
 
 }
 // Items per page (default to 7, override if set in query)

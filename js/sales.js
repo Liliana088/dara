@@ -119,7 +119,7 @@ function createProductRow(productOptionsHTML) {
   newRow.innerHTML = `
     <div class="input-group me-2" style="width: 1300px;">
       <button type="button" class="btn btn-outline-danger delete-row-btn">
-        <i class="fa-solid fa-trash"></i>
+        <i class="bi bi-trash-fill"></i>
       </button>
       <select class="form-select product-select" name="product_id[]" onchange="updatePrice(this)">
         ${productOptionsHTML}
