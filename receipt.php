@@ -81,9 +81,9 @@ $display_number = isset($_GET['display']) ? intval($_GET['display']) : $sale['id
 
             <hr>
             <p><strong>Subtotal:</strong> <span style="float: right;">₱<?= number_format(round($sale['subtotal']), 2) ?></span></p>
-            <p><strong>Markup:</strong> <span style="float: right;">₱<?= number_format(round($sale['markup']), 2) ?></span></p>
+            <p><strong>Markup:</strong> <span style="float: right;">₱<?= number_format(floor($sale['markup']), 2) ?></span></p>
             <hr>
-            <p><strong>Total:</strong> <span style="float: right;"><strong>₱<?= number_format(round($sale['total_cost']), 2) ?></strong></span></p>
+            <p><strong>Total:</strong> <span style="float: right;"><strong>₱<?= number_format(floor($sale['total_cost']), 2) ?></strong></span></p>
             <p><strong>Cash Received:</strong> <span style="float: right;">₱<?= number_format(round($sale['cash_received']), 2) ?></span></p>
             <p><strong>Change:</strong> <span style="float: right;">₱<?= number_format(round($sale['change_given']), 2) ?></span></p>
         </div>

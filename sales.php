@@ -7,97 +7,93 @@ if (!isset($_SESSION['user_name'])) {
 }
 
 include "db_conn.php";
-//insert products on dropdown, add sales
+
+// Fetch products for dropdown
 $productQuery = "SELECT * FROM products";
 $productResult = $conn->query($productQuery);
 
 $products = [];
-if ($productResult->num_rows > 0) {
+if ($productResult && $productResult->num_rows > 0) {
     while ($row = $productResult->fetch_assoc()) {
         $products[] = $row;
     }
 }
 
-// Handle form submission
+// Handle form submission for adding a sale
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset($_POST['quantity'])) {
-  $seller = $_SESSION['user_name'];
-  $payment_method = $_POST['payment_method'];
-  $date = $_POST['date'];
-  $product_ids = $_POST['product_id'];
-  $quantities = $_POST['quantity'];
-  $cash_received = floatval($_POST['received'] ?? 0);
-  $change_given = isset($_POST['change']) ? floatval($_POST['change']) : 0;
+    $seller = $_SESSION['user_name'];
+    $payment_method = $_POST['payment_method'];
+    $date = $_POST['date'];
+    $product_ids = $_POST['product_id'];
+    $quantities = $_POST['quantity'];
+    $cash_received = floatval($_POST['received'] ?? 0);
 
-  $subtotal = 0;
-  $total_markup = 0;
-  $price_at_sale_list = [];
+    $subtotal = 0;
+    $total_markup = 0;
+    $price_at_sale_list = [];
 
-  // Fetch cost and markup for each product to compute prices
-  foreach ($product_ids as $index => $product_id) {
-      $quantity = intval($quantities[$index]);
+    // Calculate subtotal and markup per product
+    foreach ($product_ids as $index => $product_id) {
+        $quantity = intval($quantities[$index]);
 
-      // Get the product's cost and markup
-      $stmt = $conn->prepare("SELECT cost, markup FROM products WHERE id = ?");
-      $stmt->bind_param("i", $product_id);
-      $stmt->execute();
-      $stmt->bind_result($cost, $markup);
-      $stmt->fetch();
-      $stmt->close();
+        $stmt = $conn->prepare("SELECT cost, markup FROM products WHERE id = ?");
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $stmt->bind_result($cost, $markup);
+        $stmt->fetch();
+        $stmt->close();
 
-      $subtotal += round($cost * $quantity);
-      $markup_amount = round ($cost * ($markup / 100));
-      $total_markup += round(($markup / 100) * $cost * $quantity, 2);
-      $price_at_sale_list[] = $cost + ($markup / 100 * $cost);
-      
-  }
-
-  $total_cost = round($subtotal + $total_markup);
-  $change = $cash_received - $total_cost;
-  
-
-// If stock is sufficient, proceed with recording the sale
-$is_stock_sufficient = true;
-
-// First, check if there is enough stock for all products
-foreach ($product_ids as $index => $product_id) {
-    $quantity = intval($quantities[$index]);
-
-    $check = $conn->prepare("SELECT Description, stock FROM products WHERE id = ?");
-    $check->bind_param("i", $product_id);
-    $check->execute();
-    $check->bind_result($product_name, $available_stocks);
-    $check->fetch();
-    $check->close();
-
-    if ($available_stocks < $quantity) {
-        $_SESSION['error'] = "Cannot proceed with sale for \"{$product_name}\". Only {$available_stocks} in stock.";
-        header("Location: sales.php");
-        exit;
+        $subtotal += $cost * $quantity;
+        $markup_amount = ($markup / 100) * $cost;
+        $total_markup += $markup_amount * $quantity;
+        $price_at_sale_list[] = $cost + $markup_amount;
     }
-}
 
-// Check if cash_received is less than total cost
-$total_cost = $subtotal + $total_markup;
+    // Check stock availability for all products
+    foreach ($product_ids as $index => $product_id) {
+        $quantity = intval($quantities[$index]);
 
-if ($cash_received < $total_cost) {
-    $_SESSION['error'] = "Cash received was less than total cost. Sale was not processed.";
-    header("Location: sales.php");
-    exit;
-}
+        $check = $conn->prepare("SELECT Description, stock FROM products WHERE id = ?");
+        $check->bind_param("i", $product_id);
+        $check->execute();
+        $check->bind_result($product_name, $available_stocks);
+        $check->fetch();
+        $check->close();
 
-// If all validations pass, proceed with the sale
-if ($is_stock_sufficient) {
-    // Insert the main sale record
+        if ($available_stocks < $quantity) {
+            $_SESSION['error'] = "Cannot proceed with sale for \"{$product_name}\". Only {$available_stocks} in stock.";
+            header("Location: sales.php");
+            exit();
+        }
+    }
+
+    $subtotal = floor($subtotal);
+    $total_markup = floor($total_markup);
+    $total_cost = floor($subtotal + $total_markup);
+
+
+    if ($cash_received < $total_cost) {
+        $_SESSION['error'] = "Cash received was less than total cost. Sale was not processed.";
+        header("Location: sales.php");
+        exit();
+    }
+
+    $cash_received = round($cash_received);
+    $change_given = round($cash_received - $total_cost);
+
+
+    // Insert sale record
     $stmt = $conn->prepare("INSERT INTO sales (seller, payment_method, subtotal, markup, total_cost, date, cash_received, change_given) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssdddsdd", $seller, $payment_method, $subtotal, $total_markup, $total_cost, $date, $cash_received, $change_given);
     $stmt->execute();
     $sale_id = $stmt->insert_id;
     $stmt->close();
 
-    // Insert each item and update stock
+    // Insert each sale item and update stock
     foreach ($product_ids as $index => $product_id) {
         $quantity = intval($quantities[$index]);
-        $price_at_sale = $price_at_sale_list[$index];
+        $price_at_sale = round($price_at_sale_list[$index], 2);
+
 
         $stmt = $conn->prepare("INSERT INTO sales_items (sale_id, product_id, quantity, price_at_sale) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("iiid", $sale_id, $product_id, $quantity, $price_at_sale);
@@ -110,26 +106,19 @@ if ($is_stock_sufficient) {
         $stmt->close();
     }
 
-    // Now redirect after all inserts are done
     $_SESSION['success'] = "Sale added successfully!";
     header("Location: sales.php");
     exit();
 }
 
-
-}
-// Items per page (default to 7, override if set in query)
+// Pagination setup
 $itemsPerPage = isset($_GET['entries']) ? max(1, (int)$_GET['entries']) : 7;
-
-// Get the current page, default to page 1
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-
-// Calculate the starting point (offset)
 $offset = ($page - 1) * $itemsPerPage;
 
-// Modify the SQL query to include LIMIT and OFFSET for pagination
+// Query to get paginated sales with product names and seller names
 $sql = "SELECT sales.id, users.name AS seller, sales.payment_method, sales.subtotal, sales.markup, sales.total_cost, sales.date,
-        GROUP_CONCAT(DISTINCT products.description ORDER BY products.description ASC) AS product_names
+        GROUP_CONCAT(DISTINCT products.Description ORDER BY products.Description ASC) AS product_names
         FROM sales
         LEFT JOIN sales_items ON sales.id = sales_items.sale_id
         LEFT JOIN products ON sales_items.product_id = products.id
@@ -137,16 +126,20 @@ $sql = "SELECT sales.id, users.name AS seller, sales.payment_method, sales.subto
         GROUP BY sales.id
         LIMIT $itemsPerPage OFFSET $offset";
 
-// Execute the query to get the paginated sales data
-$result = mysqli_query($conn, $sql);
+$result = $conn->query($sql);
 
-// Count the total number of rows in the sales table
+// Get total number of sales for pagination
 $countSql = "SELECT COUNT(DISTINCT sales.id) as total FROM sales";
-$countResult = mysqli_query($conn, $countSql);
-$totalRows = mysqli_fetch_assoc($countResult)['total'];
-$totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
+$countResult = $conn->query($countSql);
+$totalRows = 0;
+if ($countResult) {
+    $row = $countResult->fetch_assoc();
+    $totalRows = $row['total'] ?? 0;
+}
+$totalPages = ceil($totalRows / $itemsPerPage);
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -268,9 +261,11 @@ $totalPages = ceil($totalRows / $itemsPerPage);  // Calculate the total pages
                       $row['items'] = implode("<br>", $items);
 
                       // Format subtotal, markup, and total cost to two decimal places
-                      $formatted_subtotal = number_format(round($row['subtotal']), 2);
-                      $formatted_markup = number_format(round($row['markup']), 2);
-                      $formatted_total_cost = number_format(round($row['total_cost']), 2);
+                      $formatted_subtotal = number_format(floor($row['subtotal']), 2);
+                      $formatted_markup = number_format(floor($row['markup']), 2);
+                      $formatted_total_cost = number_format(floor($row['total_cost']), 2);
+
+
 
                       //show voided
                       $badge = $row['voided'] ? "<span class='badge bg-danger'>Voided</span>" : "";
