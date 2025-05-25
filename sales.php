@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
         $stmt->close();
 
         $subtotal += $cost * $quantity;
-        $markup_amount = ($markup / 100) * $cost;
+        $markup_amount = floor(($markup / 100) * $cost);
         $total_markup += $markup_amount * $quantity;
         $price_at_sale_list[] = $cost + $markup_amount;
     }
@@ -68,6 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id']) && isset
     }
 
     $subtotal = floor($subtotal);
+    $markup_amount = floor($markup_amount);
     $total_markup = floor($total_markup);
     $total_cost = floor($subtotal + $total_markup);
 
